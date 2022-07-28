@@ -1,4 +1,4 @@
-const pagesAuthSignup = () => {
+const PagesAuthSignup = () => {
   return (
     <div>
       Pages: Auth Signup
@@ -6,4 +6,4 @@ const pagesAuthSignup = () => {
   );
 };
 
-export default pagesAuthSignup;
+export default PagesAuthSignup;

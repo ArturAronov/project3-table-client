@@ -1,4 +1,4 @@
-const pagesUserBookingsUpdate = () => {
+const PagesUserBookingsUpdate = () => {
   return (
     <div>
       Pages: User Bookings Update
@@ -6,4 +6,4 @@ const pagesUserBookingsUpdate = () => {
   );
 };
 
-export default pagesUserBookingsUpdate;
+export default PagesUserBookingsUpdate;

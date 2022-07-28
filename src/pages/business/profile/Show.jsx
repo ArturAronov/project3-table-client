@@ -1,4 +1,4 @@
-const pagesBusinessProfileShow = () => {
+const PagesBusinessProfileShow = () => {
   return (
     <div>
       Pages: Business Profile Show
@@ -6,4 +6,4 @@ const pagesBusinessProfileShow = () => {
   );
 };
 
-export default pagesBusinessProfileShow;
+export default PagesBusinessProfileShow;
