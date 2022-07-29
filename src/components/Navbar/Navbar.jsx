@@ -1,4 +1,6 @@
 import NavMenu from './NavMenu';
+import NavMenuUserAuth from './NavMenuUserAuth';
+import NavMenuBusinessAuth from './NavMenuBusinessAuth';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {

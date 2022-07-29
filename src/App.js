@@ -20,7 +20,7 @@ import PagesBusinessProfileUpdate from './pages/business/profile/Update';
 import PagesUserProfileShow from './pages/user/profile/Show';
 import PagesUserProfileUpdate from './pages/user/profile/Update';
 
-import Navbar from './components/Navbar'
+import Navbar from './components/Navbar/Navbar'
 
 function App() {
   return (
