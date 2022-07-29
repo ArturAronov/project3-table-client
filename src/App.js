@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PagesHome from './pages/Home';
+import About from './pages/About';
+import Restaurants from './pages/Restaurants';
 
 import PagesAuthLogin from './pages/auth/Login';
 import PagesAuthSignup from './pages/auth/Signup';
@@ -18,11 +20,17 @@ import PagesBusinessProfileUpdate from './pages/business/profile/Update';
 import PagesUserProfileShow from './pages/user/profile/Show';
 import PagesUserProfileUpdate from './pages/user/profile/Update';
 
+import Navbar from './components/Navbar'
+
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route index element={<PagesHome />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/restaurants' element={<Restaurants />} />
+
         <Route path='/auth/signup' element={<PagesAuthSignup />} />
         <Route path='/auth/login' element={<PagesAuthLogin />} />
 
@@ -39,6 +47,7 @@ function App() {
         <Route path='/user/bookings' element={<PagesUserBookingsShow />} />
         <Route path='/user/bookings/create' element={<PagesUserBookingsCreate />} />
         <Route path='/user/bookings/:id/update' element={<PagesUserBookingsUpdate />} />
+
       </Routes>
     </BrowserRouter>
   );
