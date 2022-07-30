@@ -27,8 +27,21 @@ const TimeInput = ({ label, ...props }) => {
           <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
         ) : null}
     </div>
-  )
-}
+  );
+};
+
+const Turnaround = ({ label, ...props }) => {
+  const [field, meta] = useField(props);
+  return (
+  <div>
+      <div className='mx-2'>{props.value} minutes</div>
+        <input min="30" max="360" value="0" className="range" step="15" {...field} {...props}/>
+      {meta.touched && meta.error ? (
+          <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
+        ) : null}
+    </div>
+  );
+};
 
 const FileInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -70,27 +83,27 @@ const ComponentsRegistrationFormsRestaurants = () => {
           open: '',
           close: '',
           turnaround: '',
-          daysOperating: '',
-          passwordHash: '',
+          // daysOperating: '',
+          password: '',
+          passwordConfirmation: '',
         }}
 
         validationSchema={yup.object({
-          firstName: yup.string()
-            .required('First name is required.'),
-          lastName: yup.string()
-            .required('Last name is required.'),
-          phone: yup.number()
-            .typeError('Please enter a number.')
-            .required('Phone number is required.'),
-          email: yup.string()
-            .email('Invalid email address')
-            .required('Email is required.'),
-          password: yup.string()
-            .min(6)
-            .required('Password is required'),
-          passwordConfirmation: yup.string()
-            .oneOf([yup.ref('password'), null], 'Password must match')
-            .required('Password confirmation is required')
+          name: yup.string(),
+          phone: yup.string(),
+          email: yup.number(),
+          building: yup.string(),
+          street: yup.string(),
+          city: yup.string(),
+          country: yup.string(),
+          zipCode: yup.string(),
+          logo: yup.mixed(),
+          open: yup.string(),
+          close: yup.string(),
+          turnaround: yup.string(),
+          // daysOperating: yup.string(),
+          password: yup.string(),
+          passwordConfirmation: yup.string(),
         })}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
@@ -100,10 +113,9 @@ const ComponentsRegistrationFormsRestaurants = () => {
 
         }}
       >
-
         <Form>
           <MyTextInput
-            name="restaurantName"
+            name="name"
             type="text"
             placeholder="Restaurant's name"
           />
@@ -162,19 +174,25 @@ const ComponentsRegistrationFormsRestaurants = () => {
           />
 
           <TimeInput
-            name="openingHours"
+            name="open"
             type="time"
             title="First Table"
           />
 
           <TimeInput
-            name="closingHours"
+            name="close"
             type="time"
             title="Last Table"
           />
 
+          <Turnaround
+            name="turnaround"
+            type="range"
+          />
+
           <button type="submit" className=" btn my-3 px-0 hero btn-outline btn-secondary ">Submit</button>
         </Form>
+
       </Formik>
     </>
   )
