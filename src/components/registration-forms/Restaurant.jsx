@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as yup from 'yup';
+import axios from 'axios';
 
 const MyTextInput = ({ label, ...props }) => {
   // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
@@ -31,31 +32,69 @@ const TimeInput = ({ label, ...props }) => {
 };
 
 const Turnaround = ({ label, ...props }) => {
+  const [val, setVal] = useState(180);
+  const [timeUnit, setTimeUnit] = useState('minutes');
+
   const [field, meta] = useField(props);
+
+  const handleChange = e => {
+    const currentValue = parseInt(e.target.value)
+    setVal(currentValue)
+  }
+
+  useEffect(() => {
+    if(val >= 120) {
+      return setTimeUnit('hours')
+    } else if(val >= 60) {
+      return setTimeUnit('hour')
+    } else {
+      return setTimeUnit('minutes')
+    }
+  }, [val])
+
   return (
-  <div>
-      <div className='mx-2'>{props.value} minutes</div>
-        <input min="30" max="360" value="0" className="range" step="15" {...field} {...props}/>
+    <div>
+      <div className='mx-2'>
+        Table turnaround time {parseInt(val / 60) > 0 && parseInt(val / 60) + ':'}
+        {val % 60 ? val % 60 : "00"} {timeUnit}
+      </div>
+      <input
+        min="30"
+        max="360"
+        value={val}
+        className="range"
+        step="15"
+        {...field}
+        {...props}
+        onChange={handleChange}
+      />
       {meta.touched && meta.error ? (
-          <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
-        ) : null}
+        <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
+      ) : null}
     </div>
   );
 };
 
 const FileInput = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
+  const [field, meta, helpers] = useField(props);
+
+  const onChange = (e) => {
+    helpers.setValue(e.target.files[0]);
+  }
+
   return (
     <div>
       <div className='mx-2'>Upload restaurant's logo</div>
       <input
-      {...field} {...props}
-      className="
-        m-2 input input-bordered max-w-xs
-        text-sm text-slate-500
-        file:mr-3 file:py-2 file:px-4 file:my-1
-        file:rounded-md file:border-0
-        hover:file:bg-violet-100
+
+        {...props}
+        onChange={onChange}
+        className="
+          m-2 input input-bordered max-w-xs
+          text-sm text-slate-500
+          file:mr-3 file:py-2 file:px-4 file:my-1
+          file:rounded-md file:border-0
+          hover:file:bg-violet-100
         "
       />
       {meta.touched && meta.error ? (
@@ -82,35 +121,65 @@ const ComponentsRegistrationFormsRestaurants = () => {
           logo: '',
           open: '',
           close: '',
-          turnaround: '',
+          // turnaround: 180,
           // daysOperating: '',
           password: '',
           passwordConfirmation: '',
         }}
 
         validationSchema={yup.object({
-          name: yup.string(),
-          phone: yup.string(),
-          email: yup.number(),
+          name: yup.string()
+            .required('Restaurant\'s name is required'),
+          phone: yup.number()
+            .typeError('Please enter a number.')
+            .required('Phone number is required.'),
+          email: yup.string()
+            .email('Invalid email address')
+            .required('Email is required.'),
           building: yup.string(),
-          street: yup.string(),
-          city: yup.string(),
-          country: yup.string(),
-          zipCode: yup.string(),
+          street: yup.string()
+            .required('Street name & number are required'),
+          city: yup.string()
+            .required('City is required.'),
+          country: yup.string()
+            .required('Country is required.'),
+          zipCode: yup.string()
+            .required('Zip code is required.'),
           logo: yup.mixed(),
-          open: yup.string(),
-          close: yup.string(),
-          turnaround: yup.string(),
+          open: yup.string()
+            .required('Please select opening time.'),
+          close: yup.string()
+            .required('Please select time for last table.'),
+          turnaround: yup.number(),
           // daysOperating: yup.string(),
-          password: yup.string(),
-          passwordConfirmation: yup.string(),
+          password: yup.string()
+            .min(6)
+            .required('Password is required.'),
+          passwordConfirmation: yup.string()
+            .oneOf([yup.ref('password'), null], 'Password must match')
+            .required('Password confirmation is required.'),
         })}
         onSubmit={(values, { setSubmitting }) => {
+          console.log(values)
           setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(true);
-          }, 400);
+            const data = new FormData()
 
+            for(let i in values) {
+              data.append(i, values[i])
+            }
+
+            for (var pair of data.entries()) {
+              console.log(pair[0]+ ', ' + pair[1]);
+            }
+
+            axios
+              .post('http://localhost:5000/api/business/auth/signup', data)
+              .catch(err => {
+            })
+            // alert(JSON.stringify(values, null, 2));
+            // alert(data);
+            setSubmitting(false);
+          }, 400);
         }}
       >
         <Form>
@@ -154,6 +223,12 @@ const ComponentsRegistrationFormsRestaurants = () => {
             name="country"
             type="text"
             placeholder="Country"
+          />
+
+          <MyTextInput
+            name="zipCode"
+            type="text"
+            placeholder="Zip Code"
           />
 
           <FileInput
