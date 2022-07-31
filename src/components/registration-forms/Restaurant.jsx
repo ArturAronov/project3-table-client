@@ -2,7 +2,7 @@ import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
 
-import MyTextInput from './MyTextInput';
+import TextInput from './TextInput';
 import TimeInput from './TimeInput';
 import Turnaround from './Turnaround';
 import FileInput from './FileInput';
@@ -83,49 +83,49 @@ const ComponentsRegistrationFormsRestaurants = () => {
         }}
       >
         <Form>
-          <MyTextInput
+          <TextInput
             name="name"
             type="text"
             placeholder="Restaurant's name"
           />
 
-          <MyTextInput
+          <TextInput
             name="phone"
             type="text"
             placeholder="Phone number"
           />
 
-          <MyTextInput
+          <TextInput
             name="email"
             type="email"
             placeholder="E-mail"
           />
 
-          <MyTextInput
+          <TextInput
             name="building"
             type="text"
             placeholder="Building name"
           />
 
-          <MyTextInput
+          <TextInput
             name="street"
             type="text"
             placeholder="Street name & number"
           />
 
-          <MyTextInput
+          <TextInput
             name="city"
             type="text"
             placeholder="City"
           />
 
-          <MyTextInput
+          <TextInput
             name="country"
             type="text"
             placeholder="Country"
           />
 
-          <MyTextInput
+          <TextInput
             name="zipCode"
             type="text"
             placeholder="Zip Code"
@@ -136,13 +136,13 @@ const ComponentsRegistrationFormsRestaurants = () => {
             type="file"
           />
 
-          <MyTextInput
+          <TextInput
             name="password"
             type="password"
             placeholder="Password"
           />
 
-          <MyTextInput
+          <TextInput
             name="passwordConfirmation"
             type="password"
             placeholder="Password Confirmation"
