@@ -1,4 +1,3 @@
-import React from 'react';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -7,6 +6,7 @@ import MyTextInput from './MyTextInput';
 import TimeInput from './TimeInput';
 import Turnaround from './Turnaround';
 import FileInput from './FileInput';
+import DaysOperatingInput from './DaysOperatingInput';
 
 const ComponentsRegistrationFormsRestaurants = () => {
   return (
@@ -26,7 +26,7 @@ const ComponentsRegistrationFormsRestaurants = () => {
           open: '',
           close: '',
           turnaround: 180,
-          daysOperating: 'asdf',
+          daysOperating: '',
           password: '',
           passwordConfirmation: '',
         }}
@@ -54,7 +54,8 @@ const ComponentsRegistrationFormsRestaurants = () => {
           close: yup.string()
             .required('Please select time for last table.'),
           turnaround: yup.number().required(),
-          daysOperating: yup.string(),
+          daysOperating: yup.string()
+            .required('Please select days when you restaurant is open.'),
           password: yup.string()
             .min(6)
             .required('Password is required.'),
@@ -72,16 +73,11 @@ const ComponentsRegistrationFormsRestaurants = () => {
               data.append(i, values[i])
             };
 
-            for (var pair of data.entries()) {
-              console.log(pair[0]+ ', ' + pair[1]);
-            }
-
             axios
               .post('http://localhost:5000/api/business/auth/signup', data)
               .catch(err => {
             });
-            // alert(JSON.stringify(values, null, 2));
-            // alert(data);
+
             setSubmitting(false);
           }, 400);
         }}
@@ -169,13 +165,11 @@ const ComponentsRegistrationFormsRestaurants = () => {
             type="range"
           />
 
-           <MyTextInput
+          <DaysOperatingInput
             name="daysOperating"
-            type="text"
-            placeholder="Days Operating"
           />
 
-          <button type="submit" className="btn my-3 px-0 hero btn-outline btn-secondary">
+          <button type="submit" className="btn my-5 px-0 hero btn-outline btn-secondary">
             Submit
           </button>
         </Form>
