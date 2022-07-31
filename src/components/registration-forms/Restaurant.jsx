@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -9,6 +10,8 @@ import FileInput from './FileInput';
 import DaysOperatingInput from './DaysOperatingInput';
 
 const ComponentsRegistrationFormsRestaurants = () => {
+  let navigate = useNavigate();
+
   return (
     <>
       <div className='text-center text-3xl m-5'>Restaurant</div>
@@ -75,6 +78,9 @@ const ComponentsRegistrationFormsRestaurants = () => {
 
             axios
               .post('http://localhost:5000/api/business/auth/signup', data)
+              .then(() => {
+                navigate('/business/bookings')
+              })
               .catch(err => {
             });
 
