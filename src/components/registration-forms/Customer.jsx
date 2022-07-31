@@ -1,10 +1,13 @@
-import React from 'react';
-import { Formik, Form, useField } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import { Formik, Form } from 'formik';
 import * as yup from 'yup';
+import axios from 'axios';
 
 import TextInput from './TextInput';
 
 const ComponentsRegistrationFormCustomer = () => {
+  let navigate = useNavigate();
+
   return (
     <>
       <div className='text-center text-3xl m-5'>User</div>
@@ -38,9 +41,22 @@ const ComponentsRegistrationFormCustomer = () => {
         })}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(true);
-          }, 400);
+            const data = new FormData();
+
+            for(let i in values) {
+              data.append(i, values[i])
+            };
+
+            axios
+              .post('http://localhost:5000/api/user/auth/signup', data)
+              .then(() => {
+                navigate('/restaurants')
+              })
+              .catch(err => {
+            });
+
+            setSubmitting(false);
+          }, 400)
 
         }}
       >
