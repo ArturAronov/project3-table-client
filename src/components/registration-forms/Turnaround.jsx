@@ -24,8 +24,8 @@ const Turnaround = ({ label, ...props }) => {
   }, [val]);
 
   return (
-    <div>
-      <div className='mx-2'>
+    <div className='mx-2'>
+      <div className='m-2'>
         Table turnaround time {parseInt(val / 60) > 0 && parseInt(val / 60) + ':'}
         {val % 60 ? val % 60 : "00"} {timeUnit}
       </div>

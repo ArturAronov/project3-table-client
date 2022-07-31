@@ -9,7 +9,7 @@ const FileInput = ({ label, ...props }) => {
   };
 
   return (
-    <div>
+    <div className='w-80'>
       <div className='mx-2'>Upload restaurant's logo</div>
       <input
         {...props}
