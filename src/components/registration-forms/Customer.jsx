@@ -2,20 +2,7 @@ import React from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as yup from 'yup';
 
-const MyTextInput = ({ label, ...props }) => {
-  // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input>. We can use field meta to show an error
-  // message if the field is invalid and it has been touched (i.e. visited)
-  const [field, meta] = useField(props);
-  return (
-    <div>
-      <input autoComplete="off" className="m-2 input input-bordered w-full max-w-xs" {...field} {...props} />
-      {meta.touched && meta.error ? (
-        <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
-      ) : null}
-    </div>
-  );
-};
+import TextInput from './TextInput';
 
 const ComponentsRegistrationFormCustomer = () => {
   return (
@@ -59,37 +46,37 @@ const ComponentsRegistrationFormCustomer = () => {
       >
 
         <Form>
-          <MyTextInput
+          <TextInput
             name="firstName"
             type="text"
             placeholder="First name"
           />
 
-          <MyTextInput
+          <TextInput
             name="lastName"
             type="text"
             placeholder="Last name"
           />
 
-          <MyTextInput
+          <TextInput
             name="phone"
             type="text"
             placeholder="Phone number"
           />
 
-          <MyTextInput
+          <TextInput
             name="email"
             type="email"
             placeholder="E-mail"
           />
 
-          <MyTextInput
+          <TextInput
             name="password"
             type="password"
             placeholder="Password"
           />
 
-          <MyTextInput
+          <TextInput
             name="passwordConfirmation"
             type="password"
             placeholder="Password confirmation"
