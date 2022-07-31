@@ -1,115 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Formik, Form, useField } from 'formik';
+import React from 'react';
+import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
 
-const MyTextInput = ({ label, ...props }) => {
-  // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input>. We can use field meta to show an error
-  // message if the field is invalid and it has been touched (i.e. visited)
-  const [field, meta] = useField(props);
-  return (
-    <div>
-      <input autoComplete="off" className="m-2 input input-bordered w-full max-w-xs" {...field} {...props} />
-      {meta.touched && meta.error ? (
-        <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
-      ) : null}
-    </div>
-  );
-};
-
-const TimeInput = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
-  return (
-  <div>
-      <div className='mx-2'>{props.title}</div>
-      <input autoComplete="off" className="m-2 input input-bordered w-full max-w-xs" {...field} {...props} />
-      {meta.touched && meta.error ? (
-          <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
-        ) : null}
-    </div>
-  );
-};
-
-const Turnaround = ({ label, ...props }) => {
-  const [val, setVal] = useState(180);
-  const [timeUnit, setTimeUnit] = useState('minutes');
-
-  const [field, meta] = useField(props);
-
-  const handleChange = e => {
-    const currentValue = parseInt(e.target.value)
-    setVal(currentValue)
-  }
-
-  useEffect(() => {
-    if(val >= 120) {
-      return setTimeUnit('hours')
-    } else if(val >= 60) {
-      return setTimeUnit('hour')
-    } else {
-      return setTimeUnit('minutes')
-    }
-  }, [val])
-
-  return (
-    <div>
-      <div className='mx-2'>
-        Table turnaround time {parseInt(val / 60) > 0 && parseInt(val / 60) + ':'}
-        {val % 60 ? val % 60 : "00"} {timeUnit}
-      </div>
-      <input
-        min="30"
-        max="360"
-        value={val}
-        className="range"
-        step="15"
-        {...field}
-        {...props}
-        onChange={handleChange}
-      />
-      {meta.touched && meta.error ? (
-        <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
-      ) : null}
-    </div>
-  );
-};
-
-const FileInput = ({ label, ...props }) => {
-  const [field, meta, helpers] = useField(props);
-
-  const onChange = (e) => {
-    helpers.setValue(e.target.files[0]);
-  }
-
-  return (
-    <div>
-      <div className='mx-2'>Upload restaurant's logo</div>
-      <input
-
-        {...props}
-        onChange={onChange}
-        className="
-          m-2 input input-bordered max-w-xs
-          text-sm text-slate-500
-          file:mr-3 file:py-2 file:px-4 file:my-1
-          file:rounded-md file:border-0
-          hover:file:bg-violet-100
-        "
-      />
-      {meta.touched && meta.error ? (
-        <div className="error text-red-400 text-sm mx-3">{meta.error}</div>
-      ) : null}
-    </div>
-  );
-};
+import MyTextInput from './MyTextInput';
+import TimeInput from './TimeInput';
+import Turnaround from './Turnaround';
+import FileInput from './FileInput';
 
 const ComponentsRegistrationFormsRestaurants = () => {
   return (
     <>
       <div className='text-center text-3xl m-5'>Restaurant</div>
       <Formik
-        initialValues={{
+        initialValues = {{
           name: '',
           phone: '',
           email: '',
@@ -121,13 +25,13 @@ const ComponentsRegistrationFormsRestaurants = () => {
           logo: '',
           open: '',
           close: '',
-          // turnaround: 180,
-          // daysOperating: '',
+          turnaround: 180,
+          daysOperating: 'asdf',
           password: '',
           passwordConfirmation: '',
         }}
 
-        validationSchema={yup.object({
+        validationSchema = {yup.object({
           name: yup.string()
             .required('Restaurant\'s name is required'),
           phone: yup.number()
@@ -143,15 +47,14 @@ const ComponentsRegistrationFormsRestaurants = () => {
             .required('City is required.'),
           country: yup.string()
             .required('Country is required.'),
-          zipCode: yup.string()
-            .required('Zip code is required.'),
+          zipCode: yup.string(),
           logo: yup.mixed(),
           open: yup.string()
             .required('Please select opening time.'),
           close: yup.string()
             .required('Please select time for last table.'),
-          turnaround: yup.number(),
-          // daysOperating: yup.string(),
+          turnaround: yup.number().required(),
+          daysOperating: yup.string(),
           password: yup.string()
             .min(6)
             .required('Password is required.'),
@@ -159,14 +62,15 @@ const ComponentsRegistrationFormsRestaurants = () => {
             .oneOf([yup.ref('password'), null], 'Password must match')
             .required('Password confirmation is required.'),
         })}
+
         onSubmit={(values, { setSubmitting }) => {
           console.log(values)
           setTimeout(() => {
-            const data = new FormData()
+            const data = new FormData();
 
             for(let i in values) {
               data.append(i, values[i])
-            }
+            };
 
             for (var pair of data.entries()) {
               console.log(pair[0]+ ', ' + pair[1]);
@@ -175,7 +79,7 @@ const ComponentsRegistrationFormsRestaurants = () => {
             axios
               .post('http://localhost:5000/api/business/auth/signup', data)
               .catch(err => {
-            })
+            });
             // alert(JSON.stringify(values, null, 2));
             // alert(data);
             setSubmitting(false);
@@ -265,7 +169,15 @@ const ComponentsRegistrationFormsRestaurants = () => {
             type="range"
           />
 
-          <button type="submit" className=" btn my-3 px-0 hero btn-outline btn-secondary ">Submit</button>
+           <MyTextInput
+            name="daysOperating"
+            type="text"
+            placeholder="Days Operating"
+          />
+
+          <button type="submit" className="btn my-3 px-0 hero btn-outline btn-secondary">
+            Submit
+          </button>
         </Form>
 
       </Formik>
