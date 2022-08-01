@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
   return (
       <div className="navbar bg-base-100">
-        <div className="flex-1 navbar-start text-3xl select-none text-white mx-3">
+        <div className="flex-1 navbar-start text-3xl select-none text-primary-focus text- mx-3">
           <Link to='/'>
             TABLE
           </Link>
