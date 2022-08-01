@@ -1,11 +1,26 @@
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+
 import NavMenu from './NavMenu';
 import NavMenuUserAuth from './NavMenuUserAuth';
 import NavMenuBusinessAuth from './NavMenuBusinessAuth';
-import { Link } from 'react-router-dom';
+import TableContext from '../../context/TableContext';
 
 const Navbar = () => {
+  const { authType } = useContext(TableContext)
+
+  const renderNavMenu = () => {
+    if(authType === 'user') {
+      return <NavMenuUserAuth />
+    } else if (authType === 'business') {
+      return <NavMenuBusinessAuth />
+    } else {
+      return <NavMenu />
+    }
+  }
+
   return (
-      <div className="navbar bg-base-100">
+    <div className="navbar bg-base-100">
         <div className="flex-1 navbar-start text-3xl select-none text-primary-focus text- mx-3">
           <Link to='/'>
             TABLE
@@ -14,7 +29,7 @@ const Navbar = () => {
         <div className='navbar-end'>
           <div className="hidden sm:flex">
             <div className="menu menu-horizontal p-0">
-              <NavMenu />
+              {renderNavMenu()}
             </div>
           </div>
 
@@ -26,7 +41,6 @@ const Navbar = () => {
               </svg>
             </label>
             <div tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow-xl bg-base-100 rounded-box text-center">
-              <NavMenu />
             </div>
           </div>
         </div>
