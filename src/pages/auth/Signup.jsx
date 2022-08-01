@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import ComponentsRegistrationFormCustomer from '../../components/registration-forms/Customer'
-import ComponentsRegistrationFormsRestaurants from '../../components/registration-forms/Restaurant'
+import ComponentsRegistrationFormCustomer from '../../components/AuthForms/Customer'
+import ComponentsRegistrationFormsRestaurants from '../../components/AuthForms/Restaurant'
 const PagesAuthSignup = () => {
   const [toggle, setToggle] = useState(true);
 
@@ -10,13 +10,13 @@ const PagesAuthSignup = () => {
   return (
     <div className='hero-content'>
       <div>
-        <div className='text-center'>
+        <div className='text-center text-4xl'>
           Register
         </div>
-        <div className='text-center'>
+        <div className='text-center mt-5'>
           Select your portal
         </div>
-        <div className="form-control w-auto hero-content">
+        <div className="form-control w-auto hero-content my-2 p-0">
           <label className="label cursor-pointer">
             <span className="label-text mx-3">Customer</span>
             <input
