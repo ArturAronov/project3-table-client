@@ -68,7 +68,6 @@ const ComponentsRegistrationFormsRestaurants = () => {
         })}
 
         onSubmit={(values, { setSubmitting }) => {
-          console.log(values)
           setTimeout(() => {
             const data = new FormData();
 

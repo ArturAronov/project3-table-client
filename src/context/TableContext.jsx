@@ -19,7 +19,6 @@ export const TableProvider = ({ children }) => {
   const getProfile = () => {
     axios.get('http://localhost:5000/api/profile', {withCredentials: true})
       .then(data => {
-        console.log(data.data)
         dispatch({
           type: 'AUTH',
           payload: data.data,
@@ -42,7 +41,6 @@ export const TableProvider = ({ children }) => {
             authType: 'user',
             login: true,
           }),
-          console.log(data.data)
         )
         .then(navigate('/restaurants'))
   };
@@ -60,7 +58,6 @@ export const TableProvider = ({ children }) => {
             authType: 'business',
             login: true,
           })
-          console.log(data.data)
         })
         .then(navigate('/restaurants'))
   };
