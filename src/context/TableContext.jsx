@@ -24,11 +24,15 @@ export const TableProvider = ({ children }) => {
         dispatch({
           type: 'AUTH',
           id: resp.data.id,
-          data: _.omit(resp.data, ['id', 'authType']),
+          data: _.omit(resp.data, ['authType']),
           authType: resp.data.authType,
           login: true,
         })
       })
+  };
+
+  const updateUserProfile = data => {
+    axios.put('http://localhost:5000/api/user/profile/update', data, {withCredentials: true}).then(() => navigate('/user/profile'))
   };
 
   const authUserLogin = data => {
@@ -83,7 +87,8 @@ export const TableProvider = ({ children }) => {
       authUserLogin,
       authBusinessLogin,
       authLogout,
-      getProfile
+      getProfile,
+      updateUserProfile,
     }}
     >
       {children}
