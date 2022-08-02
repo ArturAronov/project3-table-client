@@ -13,6 +13,7 @@ export const TableProvider = ({ children }) => {
     authType: '',
     data: {},
     restaurants: [],
+    restaurantInfo: {},
     bookings: [],
   };
 
@@ -47,6 +48,15 @@ export const TableProvider = ({ children }) => {
         restaurants: res.data
       });
     });
+  };
+
+  const getRestaurantInfo = id => {
+    axios.get(`http://localhost:5000/api/restaurant/${id}`).then(res => {
+      dispatch({
+        type: 'GET_RESTAURANT_INFO',
+        restaurantInfo: res.data
+      });
+    })
   };
 
   const profileArray = () => {
@@ -126,7 +136,8 @@ export const TableProvider = ({ children }) => {
       getRestaurants,
       updateUserProfile,
       profileArray,
-      getUserBookings
+      getUserBookings,
+      getRestaurantInfo,
     }}
     >
       {children}

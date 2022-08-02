@@ -7,6 +7,7 @@ import App from './App';
 import PagesHome from '../pages/Home';
 import About from '../pages/About';
 import Restaurants from '../pages/Restaurants';
+import RestaurantInfo from '../pages/RestaurantInfo';
 
 import PagesAuthLogin from '../pages/auth/Login';
 import PagesAuthSignup from '../pages/auth/Signup';
@@ -35,6 +36,7 @@ function Routing() {
             <Route index element={<PagesHome />} />
             <Route path='/about' element={<About />} />
             <Route path='/restaurants' element={<Restaurants />} />
+            <Route path='/restaurant/:id' element={<RestaurantInfo />} />
 
             <Route path='/auth/signup' element={<PagesAuthSignup />} />
             <Route path='/auth/login' element={<PagesAuthLogin />} />
