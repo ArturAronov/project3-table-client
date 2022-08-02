@@ -3,7 +3,7 @@ const tableReducer = (state, action) => {
     case 'AUTH':
       return {
         ...state,
-        data: action.data,
+        profile: action.profile,
         authType: action.authType,
         login: action.login,
       }

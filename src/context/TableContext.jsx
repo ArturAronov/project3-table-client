@@ -11,7 +11,7 @@ export const TableProvider = ({ children }) => {
   const initialState = {
     login: false,
     authType: '',
-    data: {},
+    profile: {},
     restaurants: [],
     restaurantInfo: {},
     bookings: [],
@@ -34,7 +34,7 @@ export const TableProvider = ({ children }) => {
       .then(res => {
         dispatch({
           type: 'AUTH',
-          data: _.omit(res.data, ['id', 'authType']),
+          profile: _.omit(res.data, ['id', 'authType']),
           authType: res.data.authType,
           login: true,
         })
@@ -61,7 +61,7 @@ export const TableProvider = ({ children }) => {
 
   const profileArray = () => {
     const tempArr = []
-    for(let i in state.data) {
+    for(let i in state.profile) {
       // Change the key from ie firstName to first Name
       const removeCamelCase = i.split('').map(letter => {
         return letter === letter.toUpperCase() ? ` ${letter}` : letter
@@ -70,7 +70,7 @@ export const TableProvider = ({ children }) => {
       // Capitalize key's first letter
       const capitalizeFirstLetter = removeCamelCase.charAt(0).toUpperCase() + removeCamelCase.slice(1);
 
-      tempArr.push({[capitalizeFirstLetter]: state.data[i]});
+      tempArr.push({[capitalizeFirstLetter]: state.profile[i]});
     };
 
     return tempArr;
@@ -78,6 +78,10 @@ export const TableProvider = ({ children }) => {
 
   const updateUserProfile = data => {
     axios.put('http://localhost:5000/api/user/profile/update', data, {withCredentials: true}).then(() => navigate('/user/profile'))
+  };
+
+  const updateRestaurantProfile = data => {
+    axios.put('http://localhost:5000/api/business/profile/update', data, {withCredentials: true}).then(() => navigate('/business/profile'))
   };
 
   const authUserLogin = data => {
@@ -120,7 +124,7 @@ export const TableProvider = ({ children }) => {
         type: 'AUTH',
         login: false,
         authType: '',
-        data: {},
+        profile: {},
       })
     })
     .then(navigate('/'));
@@ -138,6 +142,7 @@ export const TableProvider = ({ children }) => {
       profileArray,
       getUserBookings,
       getRestaurantInfo,
+      updateRestaurantProfile,
     }}
     >
       {children}
