@@ -11,6 +11,7 @@ export const TableProvider = ({ children }) => {
     login: false,
     authType: '',
     data: {},
+    restaurants: [],
   };
 
   const navigate = useNavigate();
@@ -27,6 +28,15 @@ export const TableProvider = ({ children }) => {
           login: true,
         })
       })
+  };
+
+  const getRestaurants = () => {
+    axios.get('http://localhost:5000/api/restaurants').then(res => {
+      dispatch({
+        type: 'GET_RESTAURANTS',
+        restaurants: res.data
+      });
+    });
   };
 
   const profileArray = () => {
@@ -103,6 +113,7 @@ export const TableProvider = ({ children }) => {
       authBusinessLogin,
       authLogout,
       getProfile,
+      getRestaurants,
       updateUserProfile,
       profileArray,
     }}

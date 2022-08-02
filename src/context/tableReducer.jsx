@@ -8,6 +8,11 @@ const tableReducer = (state, action) => {
         login: action.login,
       }
 
+    case 'GET_RESTAURANTS':
+      return {
+        restaurants: action.restaurants
+      }
+
     default:
       return state
   };
