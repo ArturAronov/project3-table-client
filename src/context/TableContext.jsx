@@ -8,7 +8,6 @@ const TableContext = createContext();
 
 export const TableProvider = ({ children }) => {
   const initialState = {
-    id: '',
     login: false,
     authType: '',
     data: {},
@@ -23,12 +22,28 @@ export const TableProvider = ({ children }) => {
       .then(resp => {
         dispatch({
           type: 'AUTH',
-          id: resp.data.id,
-          data: _.omit(resp.data, ['authType']),
+          data: _.omit(resp.data, ['id', 'authType']),
           authType: resp.data.authType,
           login: true,
         })
       })
+  };
+
+  const profileArray = () => {
+    const tempArr = []
+    for(let i in state.data) {
+      // Change the key from ie firstName to first Name
+      const removeCamelCase = i.split('').map(letter => {
+        return letter === letter.toUpperCase() ? ` ${letter}` : letter
+      }).join('');
+
+      // Capitalize key's first letter
+      const capitalizeFirstLetter = removeCamelCase.charAt(0).toUpperCase() + removeCamelCase.slice(1);
+
+      tempArr.push({[capitalizeFirstLetter]: state.data[i]});
+    };
+
+    return tempArr;
   };
 
   const updateUserProfile = data => {
@@ -89,6 +104,7 @@ export const TableProvider = ({ children }) => {
       authLogout,
       getProfile,
       updateUserProfile,
+      profileArray,
     }}
     >
       {children}
