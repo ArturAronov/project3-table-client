@@ -7,24 +7,34 @@ import _ from 'lodash';
 const TableContext = createContext();
 
 export const TableProvider = ({ children }) => {
+  const navigate = useNavigate();
   const initialState = {
     login: false,
     authType: '',
     data: {},
     restaurants: [],
+    bookings: [],
   };
-
-  const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(tableReducer, initialState);
 
+  const getUserBookings = () => {
+    axios.get('http://localhost:5000/api/user/bookings', {withCredentials: true})
+      .then(res => {
+        dispatch({
+          type: 'GET_USER_BOOKINGS',
+          bookings: res.data
+        });
+      });
+  };
+
   const getProfile = () => {
     axios.get('http://localhost:5000/api/profile', {withCredentials: true})
-      .then(resp => {
+      .then(res => {
         dispatch({
           type: 'AUTH',
-          data: _.omit(resp.data, ['id', 'authType']),
-          authType: resp.data.authType,
+          data: _.omit(res.data, ['id', 'authType']),
+          authType: res.data.authType,
           login: true,
         })
       })
@@ -116,6 +126,7 @@ export const TableProvider = ({ children }) => {
       getRestaurants,
       updateUserProfile,
       profileArray,
+      getUserBookings
     }}
     >
       {children}

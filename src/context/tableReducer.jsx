@@ -10,7 +10,14 @@ const tableReducer = (state, action) => {
 
     case 'GET_RESTAURANTS':
       return {
+        ...state,
         restaurants: action.restaurants
+      }
+
+    case 'GET_USER_BOOKINGS':
+      return {
+        ...state,
+        bookings: action.bookings
       }
 
     default:

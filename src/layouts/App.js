@@ -5,11 +5,12 @@ import TableContext from '../context/TableContext'
 import Navbar from '../components/Navbar/Navbar';
 
 const App = () => {
-const { getProfile, getRestaurants } = useContext(TableContext);
+const { getProfile, getRestaurants, getUserBookings } = useContext(TableContext);
 
   useEffect(() => {
     getProfile();
     getRestaurants();
+    getUserBookings();
   }, [])
 
   return (
