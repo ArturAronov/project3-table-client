@@ -1,15 +1,13 @@
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
-import axios from 'axios';
 
 import TableContext from '../../../context/TableContext';
 import TextInput from '../../../components/AuthForms/TextInput';
 
 const PagesUserProfileUpdate = () => {
   const { updateUserProfile } = useContext(TableContext);
-  let navigate = useNavigate();
+
   return (
     <>
       <div className='text-center text-3xl m-5'>User</div>
