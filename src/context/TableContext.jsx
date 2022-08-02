@@ -2,11 +2,13 @@ import { createContext, useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
 import tableReducer from './tableReducer';
 import axios from 'axios';
+import _ from 'lodash';
 
 const TableContext = createContext();
 
 export const TableProvider = ({ children }) => {
   const initialState = {
+    id: '',
     login: false,
     authType: '',
     data: {},
@@ -18,11 +20,12 @@ export const TableProvider = ({ children }) => {
 
   const getProfile = () => {
     axios.get('http://localhost:5000/api/profile', {withCredentials: true})
-      .then(data => {
+      .then(resp => {
         dispatch({
           type: 'AUTH',
-          payload: data.data,
-          authType: data.data.authType,
+          id: resp.data.id,
+          data: _.omit(resp.data, ['id', 'authType']),
+          authType: resp.data.authType,
           login: true,
         })
       })
@@ -34,10 +37,10 @@ export const TableProvider = ({ children }) => {
           data,
           {withCredentials: true}
         )
-        .then(data =>
+        .then(resp =>
           dispatch({
             type: 'AUTH',
-            payload: data.data,
+            payload: resp.data,
             authType: 'user',
             login: true,
           }),
@@ -51,10 +54,10 @@ export const TableProvider = ({ children }) => {
           data,
           {withCredentials: true}
         )
-        .then(data => {
+        .then(resp => {
           dispatch({
             type: 'AUTH',
-            payload: data.data,
+            payload: resp.data,
             authType: 'business',
             login: true,
           })
