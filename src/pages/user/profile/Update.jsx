@@ -10,7 +10,7 @@ const PagesUserProfileUpdate = () => {
 
   return (
     <>
-      <div className='text-center text-3xl m-5'>User</div>
+      <div className='text-center text-3xl m-5'>Update Profile</div>
       <Formik
         initialValues={{
           firstName: '',
