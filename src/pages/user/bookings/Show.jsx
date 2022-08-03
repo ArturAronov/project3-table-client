@@ -18,6 +18,7 @@ const PagesUserBookingsShow = () => {
           </thead>
           <tbody>
               {bookings.map(element => {
+              {console.log(element)}
                 return (
                   <tr key={element.id}>
                     <td className='text-center'>{element.time}</td>
