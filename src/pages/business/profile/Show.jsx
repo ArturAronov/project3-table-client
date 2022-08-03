@@ -11,7 +11,7 @@ const PagesUserProfileShow = () => {
   }, []);
 
   return (
-    <div className='w-screen my-5'>
+    <div className='max-w-screen my-5'>
       <div className='flex justify-center py-5'>
         <div className="stats stats-vertical shadow my-5">
           { profileArray().map(element => {
@@ -21,14 +21,14 @@ const PagesUserProfileShow = () => {
               return (
                 <div className="stat" key={Object.keys(element)}>
                   <div className="flex justify-center stat-title"> {Object.keys(element)} </div>
-                  <div className="flex justify-center stat-value"> {daysShortened} </div>
+                  <div className="flex justify-center sm:stat-value text-lg"> {daysShortened} </div>
                 </div>
               )
             } else if(Object.keys(element)[0] !== 'Logo' && Object.values(element)[0] !== '') {
               return (
                 <div className="stat" key={Object.keys(element)}>
                   <div className="flex justify-center stat-title"> {Object.keys(element)} </div>
-                  <div className="flex justify-center stat-value"> {Object.values(element)} </div>
+                  <div className="flex justify-center sm:stat-value text-lg"> {Object.values(element)} </div>
                 </div>
               )}
           })}
