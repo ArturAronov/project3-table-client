@@ -8,7 +8,7 @@ import TableContext from '../context/TableContext';
 import UserCreateBooking from '../components/Modals/UserCreateBooking';
 
 const Restaurants = () => {
-  const { restaurants, login, getAvailableTimeslots, availableTimeslots, maxCapacity, test } = useContext(TableContext);
+  const { restaurants, login, getAvailableTimeslots, availableTimeslots, maxCapacity } = useContext(TableContext);
   const [bookButtonStyle, setBookButtonStyle] = useState('btn btn-disabled w-24 mx-1');
   const [moduleBookButtonStyle, setModuleBookButtonStyle] = useState('btn btn-disabled w-24 mx-1');
   const [restaurantProfile, setRestaurantProfile] = useState({});
