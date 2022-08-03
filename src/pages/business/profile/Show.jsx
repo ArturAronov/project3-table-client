@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import TableContext from '../../../context/TableContext';
+import TableSettings from '../../../components/TableSettings';
 
 const PagesUserProfileShow = () => {
   const { getProfile, profileArray } = useContext(TableContext);
@@ -12,6 +13,10 @@ const PagesUserProfileShow = () => {
 
   return (
     <div className='max-w-screen my-5'>
+      <div>
+        <p className='flex justify-center m-5 text-4xl'>Table Settings</p>
+        <TableSettings />
+      </div>
       <div className='flex justify-center py-5'>
         <div className="stats stats-vertical shadow my-5">
           { profileArray().map(element => {
@@ -46,6 +51,7 @@ const PagesUserProfileShow = () => {
           })}
         </div>
       </div>
+
       <div className='flex justify-center'>
         <Link to='/business/profile/edit'>
           <div className='btn btn-accent w-20'>Edit</div>
