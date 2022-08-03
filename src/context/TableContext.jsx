@@ -111,7 +111,7 @@ export const TableProvider = ({ children }) => {
           dispatch({
             type: 'AUTH',
             payload: resp.data,
-            authType: 'business',
+            authType: 'restaurant',
             login: true,
           })
         })
