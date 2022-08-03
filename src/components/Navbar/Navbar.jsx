@@ -12,7 +12,7 @@ const Navbar = () => {
   const renderNavMenu = () => {
     if(authType === 'user') {
       return <NavMenuUserAuth />
-    } else if (authType === 'business') {
+    } else if (authType === 'restaurant') {
       return <NavMenuBusinessAuth />
     } else {
       return <NavMenu />
