@@ -25,6 +25,13 @@ const tableReducer = (state, action) => {
         ...state,
         restaurantInfo: action.restaurantInfo
       }
+
+    case 'TIMESLOTS':
+      return {
+        ...state,
+        availableTimeslots: action.availableTimeslots,
+        maxCapacity: action.maxCapacity
+      }
     default:
       return state
   };
