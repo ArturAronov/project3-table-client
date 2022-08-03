@@ -11,7 +11,7 @@ import FileInput from '../../../components/AuthForms/FileInput';
 import DaysOperatingInput from '../../../components/AuthForms/DaysOperatingInput';
 
 const PagesRestaurantProfileUpdate = () => {
-  const { updateRestaurantProfile } = useContext(TableContext);
+  const { updateRestaurantProfile, profile } = useContext(TableContext);
 
   return (
     <>
@@ -29,7 +29,7 @@ const PagesRestaurantProfileUpdate = () => {
           logo: '',
           open: '',
           close: '',
-          turnaround: 180,
+          turnaround: profile.turnaround,
           daysOperating: '',
           password: '',
           passwordConfirmation: '',
