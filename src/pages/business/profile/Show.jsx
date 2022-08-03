@@ -24,6 +24,18 @@ const PagesUserProfileShow = () => {
                   <div className="flex justify-center sm:stat-value text-lg"> {daysShortened} </div>
                 </div>
               )
+            } else if(Object.keys(element)[0] === 'Turnaround') {
+              const turnaroundInt = Object.values(element)[0]
+              return (
+                <div className="stat" key={Object.keys(element)}>
+                  <div className="flex justify-center stat-title"> {Object.keys(element)} </div>
+                  <div className="flex justify-center sm:stat-value text-lg">
+                    { parseInt(turnaroundInt / 60) > 0 ? `${parseInt(turnaroundInt/60)} h` : '' }
+                    {' '}
+                    { turnaroundInt % 60 ? `${turnaroundInt%60} min` : ''}
+                  </div>
+                </div>
+              )
             } else if(Object.keys(element)[0] !== 'Logo' && Object.values(element)[0] !== '') {
               return (
                 <div className="stat" key={Object.keys(element)}>
