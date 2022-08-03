@@ -16,22 +16,26 @@ export const TableProvider = ({ children }) => {
     restaurantInfo: {},
     bookings: [],
     availableTimeslots: [],
+    tables: [],
     maxCapacity: 0,
   };
   axios.defaults.withCredentials = true
   const [state, dispatch] = useReducer(tableReducer, initialState);
 
-  const test = (id, data) => {
-    axios
-      .post(`http://localhost:5000/api/user/booking/${id}`, data)
-      .catch((err) => console.log(err))
+  const getTables = () => {
+    return axios
+      .get('http://localhost:5000/api/business/table/')
+      .then(res => {
+        dispatch({
+          type: 'GET_TABLES',
+          tables: res.data
+        })
+      })
   }
 
   const getAvailableTimeslots = (id, covers, date, month, year) => {
     return axios.get(`http://localhost:5000/api/timeslots/${id}/${covers}/${date}/${month}/${year}`)
     .then(res => {
-      // http://localhost:5000/api/timeslots/${id}/${covers}/${date}/${month}/${year}`
-      // http://localhost:5000/api/timeslots/95a69d50-7907-4ac6-83fc-f285d14d310c/2/23/July/2022
       dispatch({
         type: 'TIMESLOTS',
         availableTimeslots: res.data.tablesAvailable,
@@ -165,7 +169,7 @@ export const TableProvider = ({ children }) => {
       getRestaurantInfo,
       updateRestaurantProfile,
       getAvailableTimeslots,
-      test,
+      getTables,
     }}
     >
       {children}

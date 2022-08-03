@@ -32,6 +32,12 @@ const tableReducer = (state, action) => {
         availableTimeslots: action.availableTimeslots,
         maxCapacity: action.maxCapacity
       }
+
+    case 'GET_TABLES':
+      return {
+        ...state,
+        tables: action.tables,
+      }
     default:
       return state
   };
