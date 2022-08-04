@@ -29,7 +29,7 @@ const TableEditModal = ({ input }) => {
 
   return (
     <>
-      <input className="modal-toggle" type="checkbox" id="a"/>
+      <input className="modal-toggle" type="checkbox" id="TableEditModal"/>
       <div className="modal">
         <div className="modal-box">
           <p className="py-4 text-3xl text-center">Edit Table {input.tableNr}</p>
@@ -82,17 +82,17 @@ const TableEditModal = ({ input }) => {
           </div>
 
           <div className="modal-action flex justify-center">
-            <label className="btn btn-outline btn-accent" htmlFor="a">Cancel</label>
+            <label className="btn btn-outline btn-accent" htmlFor="TableEditModal">Cancel</label>
             <label
               className="btn btn-outline btn-error"
-              htmlFor="a"
+              htmlFor="TableEditModal"
               onClick={() => axios.delete(`http://localhost:5000/api/business/table/${input.id}`).then(() => getTables())}
             >
               Delete Table
             </label>
             <label
               className={editBtnStyle}
-              htmlFor="a"
+              htmlFor="TableEditModal"
               onClick={() => axios.put(`http://localhost:5000/api/business/table/${input.id}`, editInput).then(() => getTables())}
             >
               Edit
