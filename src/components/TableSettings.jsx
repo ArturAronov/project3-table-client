@@ -77,7 +77,7 @@ const TableSettings = () => {
                 <td className='text-center'>
                   <label
                     className='btn btn-outline btn-error'
-                    htmlFor='a'
+                    htmlFor='TableEditModal'
                     onClick={() => setEditState({
                       id: element.id,
                       tableNr: element.tableNr,
