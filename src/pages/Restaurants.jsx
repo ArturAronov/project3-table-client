@@ -5,7 +5,7 @@ import moment from 'moment';
 import axios from 'axios';
 
 import TableContext from '../context/TableContext';
-import UserCreateBooking from '../components/Modals/UserCreateBooking';
+// import UserCreateBooking from '../components/Modals/UserCreateBooking';
 
 const Restaurants = () => {
   const { restaurants, login, getAvailableTimeslots, availableTimeslots, maxCapacity } = useContext(TableContext);
