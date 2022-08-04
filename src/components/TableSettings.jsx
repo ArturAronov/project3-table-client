@@ -2,6 +2,8 @@ import { useContext, useState, useEffect } from 'react';
 import TableContext from '../context/TableContext';
 import axios from 'axios';
 
+import TableEditModal from './Modals/TableEditModal';
+
 const TableSettings = () => {
   const { tables, getTables } = useContext(TableContext);
 
@@ -15,7 +17,8 @@ const TableSettings = () => {
   const [ newTable, setNewTable ] = useState({});
   const [ inputValues, setInputValues] = useState(initialInputValues);
   const [ errorMessage, setErrorMessage] = useState(null);
-  const [ buttonStyle, setButtonStyle ] = useState('btn btn-disabled');
+  const [ addButtonStyle, setAddButtonStyle ] = useState('btn btn-disabled');
+  const [ editState, setEditState ] = useState({});
 
   const handleSubmit = () => {
     setTimeout(() => {
@@ -45,9 +48,9 @@ const TableSettings = () => {
 
     // Change button style if there's no error
     if(!errorMessage && newTable?.tableNr && newTable?.minCapacity && newTable?.maxCapacity) {
-      setButtonStyle('btn btn-outline btn-secondary');
+      setAddButtonStyle('btn btn-outline btn-secondary');
     } else {
-      setButtonStyle('btn btn-disabled');
+      setAddButtonStyle('btn btn-disabled');
     };
 
   }, [tables, errorMessage, newTable, getTables]);
@@ -72,11 +75,24 @@ const TableSettings = () => {
                 <td className='text-center'>{element.minCapacity}</td>
                 <td className='text-center'>{element.maxCapacity}</td>
                 <td className='text-center'>
-                  <div className='btn btn-outline btn-error'>Edit</div>
+                  <label
+                    className='btn btn-outline btn-error'
+                    htmlFor='a'
+                    onClick={() => setEditState({
+                      id: element.id,
+                      tableNr: element.tableNr,
+                      minCapacity: element.minCapacity,
+                      maxCapacity: element.maxCapacity,
+                    })}
+                  >
+                    Edit
+                  </label>
                 </td>
               </tr>
             )
+
           })}
+
             <tr>
               <td className='text-center'>
                 <input
@@ -117,7 +133,7 @@ const TableSettings = () => {
               />
               </td>
               <td className='text-center'>
-                <div className={buttonStyle} onClick={() => handleSubmit()}>Add</div>
+                <div className={addButtonStyle} onClick={() => handleSubmit()}>Add</div>
               </td>
             </tr>
             <tr>
@@ -127,9 +143,13 @@ const TableSettings = () => {
             </tr>
           </tbody>
         </table>
+        <div>
+        <TableEditModal input={editState}/>
+        </div>
       </div>
     </div>
   );
 };
+
 
 export default TableSettings;
