@@ -76,7 +76,7 @@ const ComponentsRegistrationFormsRestaurants = () => {
             };
 
             axios
-              .post('process.env.API_URL/api/business/auth/signup', data)
+              .post(process.env.REACT_APP_API_URL + '/api/business/auth/signup', data)
               .then(() => {
                 navigate('/business/bookings')
               })

@@ -106,7 +106,7 @@ const UserBookingModal = ({ input }) => {
             <label
               htmlFor='userBookingModal'
               className={bookBtnStyle}
-              onClick={() => axios.post(`process.env.API_URL/api/user/booking/${input.id}`, submitData).then(() => getUserBookings()).then(() => navigate('/user/bookings'))}
+              onClick={() => axios.post(`${process.env.REACT_APP_API_URL}/api/user/booking/${input.id}`, submitData).then(() => getUserBookings()).then(() => navigate('/user/bookings'))}
             >
               Book
             </label>

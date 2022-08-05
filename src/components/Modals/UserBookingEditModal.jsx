@@ -127,14 +127,14 @@ const UserBookingEditModal = ({ input }) => {
             <label
               className="btn btn-outline btn-error"
               htmlFor="UserBookingEditModal"
-              onClick={() => axios.delete(`process.env.API_URL/api/user/booking/${input.id}`).then(() => getUserBookings())}
+              onClick={() => axios.delete(`${process.env.REACT_APP_API_URL}/api/user/booking/${input.id}`).then(() => getUserBookings())}
             >
               Delete Table
             </label>
             <label
               className={editBtnStyle}
               htmlFor="UserBookingEditModal"
-              onClick={() => axios.put(`process.env.API_URL/api/user/booking/${input.id}`, submitData).then(() => getUserBookings())}
+              onClick={() => axios.put(`${process.env.REACT_APP_API_URL}/api/user/booking/${input.id}`, submitData).then(() => getUserBookings())}
             >
               Edit
             </label>
