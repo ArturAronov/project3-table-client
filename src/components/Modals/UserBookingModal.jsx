@@ -1,15 +1,18 @@
 import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import moment from 'moment';
-
+import axios from 'axios';
 import TableContext from '../../context/TableContext';
 
 const UserBookingModal = ({ input }) => {
-  const { getAvailableTimeslots, maxCapacity, availableTimeslots } = useContext(TableContext);
+  const { getAvailableTimeslots, maxCapacity, availableTimeslots, getUserBookings } = useContext(TableContext);
+
+  const navigate = useNavigate();
 
   const bookBtnEnabled = 'btn btn-outline btn-primary w-24 mx-1';
   const bookBtnDisabled = 'btn btn-disabled w-24 mx-1';
-    const badgeActive = "badge badge-outline m-1 p-3 cursor-pointer";
+  const badgeActive = "badge badge-outline m-1 p-3 cursor-pointer";
   const badgeInactive = "badge badge-accent m-1 p-3 cursor-pointer";
 
   const [ covers, setCovers ] = useState(0);
@@ -19,12 +22,13 @@ const UserBookingModal = ({ input }) => {
   const [ bookBtnStyle, setBookBtnStyle ] = useState(bookBtnDisabled)
 
 
-    const parseCover = input => {
+  const parseCover = input => {
     return input === '' ? setCovers(0) : setCovers(parseInt(input));
   };
 
 
   useEffect(() => {
+
     if(covers > maxCapacity) {
       setBookBtnStyle(bookBtnDisabled)
     } else if(covers < 1) {
@@ -45,7 +49,6 @@ const UserBookingModal = ({ input }) => {
       time: timeSelected,
       covers: parseInt(covers)
     });
-
     getAvailableTimeslots(input.id, covers, dateArr[2], dateArr[1], dateArr[3]);
 
   }, [dateValue, covers, timeSelected]);
@@ -54,9 +57,9 @@ const UserBookingModal = ({ input }) => {
     <>
     <input class="modal-toggle" type="checkbox" id="userBookingModal" />
     <div class="modal">
-      {console.log(input)}
       <div class="modal-box">
         <Calendar
+          className='text-center'
           value={dateValue}
           onChange={value => {
             setDateValue(value);
@@ -92,7 +95,7 @@ const UserBookingModal = ({ input }) => {
 
           <div className='my-3 flex justify-center flex-wrap'>
           { covers > maxCapacity && <div> No tables available that can seat {covers} covers.</div> }
-          { (covers > 0 && covers <= maxCapacity) && availableTimeslots.map(element => {
+          { (covers > 0 && covers <= maxCapacity && input.daysOperating.split(',').includes(submitData.day)) && availableTimeslots.map(element => {
             const timeToString = element.toString().split(' ').map(string => string.slice(0,2)+':'+string.slice(2, 4)).join('')
             return <div className={timeToString === timeSelected ? badgeInactive : badgeActive} key={element} onClick={() => setTimeSelected(timeToString)}> { timeToString } </div>
           }) }
@@ -103,6 +106,7 @@ const UserBookingModal = ({ input }) => {
             <label
               htmlFor='userBookingModal'
               className={bookBtnStyle}
+              onClick={() => axios.post(`http://localhost:5000/api/user/booking/${input.id}`, submitData).then(() => getUserBookings()).then(() => navigate('/user/bookings'))}
             >
               Book
             </label>

@@ -65,7 +65,10 @@ const UserBookingEditModal = ({ input }) => {
       <div className="modal">
         <div className="modal-box">
           <p className="py-4 text-3xl text-center">Edit Booking</p>
-          <Calendar value={dateValue} onChange={value => {
+          <Calendar
+            className='text-center'
+            value={dateValue}
+            onChange={value => {
               setDateValue(value);
 
               const dateArr = moment(value).format("LLLL").split(' ').splice(0, 4).map(element => element.split('').filter(letter => letter !== ',' && letter).join(''));
