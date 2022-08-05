@@ -1,15 +1,12 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import TableContext from '../../../context/TableContext';
 
 import UserBookingEditModal from '../../../components/Modals/UserBookingEditModal';
 
 const PagesUserBookingsShow = () => {
-  const { bookings, getUserBookings, getAvailableTimeslots } = useContext(TableContext);
+  const { bookings, getAvailableTimeslots } = useContext(TableContext);
 
   const [ editInputObj, setEditInputObj ] = useState({});
-
-  useEffect(() => {
-  }, [])
   return (
     <div className='w-screen'>
     <div className='text-center text-3xl m-5'>My Bookings</div>
