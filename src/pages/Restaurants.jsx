@@ -28,7 +28,6 @@ const Restaurants = () => {
 
   return (
     <div className='my-5 w-screen'>
-    {console.log(inputData)}
       <div className='flex justify-center flex-wrap'>
       {restaurants.map(element => {
         return (
