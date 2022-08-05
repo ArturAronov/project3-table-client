@@ -17,10 +17,20 @@ export const TableProvider = ({ children }) => {
     bookings: [],
     availableTimeslots: [],
     tables: [],
+    restaurantBookings: [],
     maxCapacity: 0,
   };
   axios.defaults.withCredentials = true
   const [state, dispatch] = useReducer(tableReducer, initialState);
+
+  const getRestaurantBookings = () => {
+    return axios.get(`http://localhost:5000/api/business/booking`).then(res => {
+      dispatch({
+        type: 'GET_RESTAURANT_BOOKINGS',
+        restaurantBookings: res.data,
+      });
+    });
+  };
 
   const getTables = () => {
     return axios
@@ -170,6 +180,7 @@ export const TableProvider = ({ children }) => {
       updateRestaurantProfile,
       getAvailableTimeslots,
       getTables,
+      getRestaurantBookings,
     }}
     >
       {children}
