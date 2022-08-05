@@ -86,14 +86,14 @@ const TableEditModal = ({ input }) => {
             <label
               className="btn btn-outline btn-error"
               htmlFor="TableEditModal"
-              onClick={() => axios.delete(`http://localhost:5000/api/business/table/${input.id}`).then(() => getTables())}
+              onClick={() => axios.delete(`process.env.API_URL/api/business/table/${input.id}`).then(() => getTables())}
             >
               Delete Table
             </label>
             <label
               className={editBtnStyle}
               htmlFor="TableEditModal"
-              onClick={() => axios.put(`http://localhost:5000/api/business/table/${input.id}`, editInput).then(() => getTables())}
+              onClick={() => axios.put(`process.env.API_URL/api/business/table/${input.id}`, editInput).then(() => getTables())}
             >
               Edit
             </label>

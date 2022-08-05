@@ -23,7 +23,7 @@ const TableSettings = () => {
   const handleSubmit = () => {
     setTimeout(() => {
       axios
-        .post('http://localhost:5000/api/business/table/', newTable)
+        .post('process.env.API_URL/api/business/table/', newTable)
         .then(() => getTables())
         .then(() => setTablesArr(tables))
         .then(() => setInputValues(initialInputValues))

@@ -24,7 +24,7 @@ export const TableProvider = ({ children }) => {
   const [state, dispatch] = useReducer(tableReducer, initialState);
 
   const getRestaurantBookings = () => {
-    return axios.get(`http://localhost:5000/api/business/booking`).then(res => {
+    return axios.get(`process.env.API_URL/api/business/booking`).then(res => {
       dispatch({
         type: 'GET_RESTAURANT_BOOKINGS',
         restaurantBookings: res.data,
@@ -34,7 +34,7 @@ export const TableProvider = ({ children }) => {
 
   const getTables = () => {
     return axios
-      .get('http://localhost:5000/api/business/table/')
+      .get('process.env.API_URL/api/business/table/')
       .then(res => {
         dispatch({
           type: 'GET_TABLES',
@@ -44,7 +44,7 @@ export const TableProvider = ({ children }) => {
   }
 
   const getAvailableTimeslots = (id, covers, date, month, year) => {
-    return axios.get(`http://localhost:5000/api/timeslots/${id}/${covers}/${date}/${month}/${year}`)
+    return axios.get(`process.env.API_URL/api/timeslots/${id}/${covers}/${date}/${month}/${year}`)
     .then(res => {
       dispatch({
         type: 'TIMESLOTS',
@@ -55,7 +55,7 @@ export const TableProvider = ({ children }) => {
   };
 
   const getUserBookings = () => {
-    axios.get('http://localhost:5000/api/user/bookings', {withCredentials: true})
+    axios.get('process.env.API_URL/api/user/bookings', {withCredentials: true})
       .then(res => {
         dispatch({
           type: 'GET_USER_BOOKINGS',
@@ -65,7 +65,7 @@ export const TableProvider = ({ children }) => {
   };
 
   const getProfile = () => {
-    axios.get('http://localhost:5000/api/profile', {withCredentials: true})
+    axios.get('process.env.API_URL/api/profile', {withCredentials: true})
       .then(res => {
         dispatch({
           type: 'AUTH',
@@ -77,7 +77,7 @@ export const TableProvider = ({ children }) => {
   };
 
   const getRestaurants = () => {
-    axios.get('http://localhost:5000/api/restaurants').then(res => {
+    axios.get('process.env.API_URL/api/restaurants').then(res => {
       dispatch({
         type: 'GET_RESTAURANTS',
         restaurants: res.data
@@ -86,7 +86,7 @@ export const TableProvider = ({ children }) => {
   };
 
   const getRestaurantInfo = id => {
-    axios.get(`http://localhost:5000/api/restaurant/${id}`).then(res => {
+    axios.get(`process.env.API_URL/api/restaurant/${id}`).then(res => {
       dispatch({
         type: 'GET_RESTAURANT_INFO',
         restaurantInfo: res.data
@@ -112,16 +112,16 @@ export const TableProvider = ({ children }) => {
   };
 
   const updateUserProfile = data => {
-    axios.put('http://localhost:5000/api/user/profile/update', data, {withCredentials: true}).then(() => navigate('/user/profile'))
+    axios.put('process.env.API_URL/api/user/profile/update', data, {withCredentials: true}).then(() => navigate('/user/profile'))
   };
 
   const updateRestaurantProfile = data => {
-    axios.put('http://localhost:5000/api/business/profile/update', data, {withCredentials: true}).then(() => navigate('/business/profile'))
+    axios.put('process.env.API_URL/api/business/profile/update', data, {withCredentials: true}).then(() => navigate('/business/profile'))
   };
 
   const authUserLogin = data => {
     axios.post(
-          'http://localhost:5000/api/user/auth/login',
+          'process.env.API_URL/api/user/auth/login',
           data,
           {withCredentials: true}
         )
@@ -138,7 +138,7 @@ export const TableProvider = ({ children }) => {
 
   const authBusinessLogin = data => {
     axios.post(
-          'http://localhost:5000/api/business/auth/login',
+          'process.env.API_URL/api/business/auth/login',
           data,
           {withCredentials: true}
         )
@@ -154,7 +154,7 @@ export const TableProvider = ({ children }) => {
   };
 
   const authLogout = () => {
-    axios.delete('http://localhost:5000/api/auth/logout', {withCredentials: true}).then(() => {
+    axios.delete('process.env.API_URL/api/auth/logout', {withCredentials: true}).then(() => {
       dispatch({
         type: 'AUTH',
         login: false,
