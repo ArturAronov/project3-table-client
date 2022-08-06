@@ -13,7 +13,6 @@ import PagesAuthLogin from '../pages/auth/Login';
 import PagesAuthSignup from '../pages/auth/Signup';
 
 import PagesBusinessBookingsShow from '../pages/business/bookings/Show';
-
 import PagesUserBookingsShow from '../pages/user/bookings/Show';
 
 import PagesBusinessProfileShow from '../pages/business/profile/Show';
@@ -22,11 +21,10 @@ import PagesBusinessProfileUpdate from '../pages/business/profile/Update';
 import PagesUserProfileShow from '../pages/user/profile/Show';
 import PagesUserProfileUpdate from '../pages/user/profile/Update';
 
-function Routing() {
+const Routing = () => {
   return (
     <BrowserRouter>
       <TableProvider>
-
         <Routes>
           <Route path='/' element={<App />}>
             <Route index element={<PagesHome />} />
@@ -43,10 +41,8 @@ function Routing() {
             <Route path='/business/profile' element={<PagesBusinessProfileShow />} />
             <Route path='/business/profile/edit' element={<PagesBusinessProfileUpdate />} />
 
-            <Route path='/business/bookings' element={<PagesBusinessBookingsShow />} />/>
-
+            <Route path='/business/bookings' element={<PagesBusinessBookingsShow />} />
             <Route path='/user/bookings' element={<PagesUserBookingsShow />} />
-
           </Route>
         </Routes>
       </TableProvider>
