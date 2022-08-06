@@ -6,7 +6,7 @@ import moment from 'moment';
 import TableContext from '../../context/TableContext';
 
 const UserBookingEditModal = ({ input }) => {
-  const { getAvailableTimeslots, availableTimeslots, maxCapacity, getUserBookings } = useContext(TableContext);
+  const { getAvailableTimeslots, maxCapacity, availableTimeslots, getUserBookings } = useContext(TableContext);
 
   const months = {
     January: 0,
@@ -30,23 +30,129 @@ const UserBookingEditModal = ({ input }) => {
   const badgeActive = "badge badge-outline m-1 p-3 cursor-pointer";
   const badgeInactive = "badge badge-accent m-1 p-3 cursor-pointer";
 
-  const editBtnEnabled = 'btn btn-outline btn-primary';
-  const editBtnDisabled = 'btn btn-disabled w-24 mx-1';
+  const saveBtnEnabled = 'btn btn-outline btn-primary w-40 my-2';
+  const saveBtnDisabled = 'btn btn-disabled w-40 my-2';
 
-  const [ editBtnStyle, setEditBtnStyle ] = useState(editBtnEnabled);
+  const [ editBtnStyle, setEditBtnStyle ] = useState(saveBtnDisabled);
   const [ dateValue, setDateValue ] = useState(new Date(yearInt, monthInt, dayInt));
   const [ submitData, setSubmitData ] = useState({});
   const [ timeSelected, setTimeSelected ] = useState(input.time);
   const [ covers, setCovers ] = useState(input.covers);
+  const [ timeslots, setTimeslots ] = useState('');
+  const [ errorMessage, setErrorMessage ] = useState(false);
 
   const parseCover = input => {
     return input === '' ? setCovers(0) : setCovers(parseInt(input));
   };
 
+  const isRestaurantOpenOnSelectedDay = () => {
+    const dayOfTheWeek = moment(dateValue).format('dddd');
+    return input.daysOperating ?  input.daysOperating.split(',').includes(dayOfTheWeek) : false;
+  };
+
+  const parseErrorMessages = () => {
+    const currentDateInt = parseInt(moment(new Date()).format('Y') + moment(new Date()).format('MM') + moment(new Date()).format('DD'));
+    const userInputDateInt = parseInt(moment(dateValue).format('Y') + moment(dateValue).format('MM') + moment(dateValue).format('DD'));
+
+    if(covers === 0) {
+      setEditBtnStyle(saveBtnDisabled);
+      setErrorMessage(
+        <div className='text-red-400 text-center text-sm'>
+          Please enter covers.
+        </div>
+      );
+    } else if (maxCapacity && covers > maxCapacity) {
+      setEditBtnStyle(saveBtnDisabled);
+      setErrorMessage(
+        <div className='text-red-400 text-center text-sm'>
+          Restaurant can't facilitate {covers} covers.
+        </div>
+      );
+    } else if(currentDateInt > userInputDateInt) {
+      setEditBtnStyle(saveBtnDisabled);
+      setErrorMessage(
+        <div className='text-red-400 text-sm text-center'>
+          <div>
+            Wait a minute, Doc.
+          </div>
+          <div>
+            Are you telling me that you built a time machine...
+          </div>
+          <div>
+            Out of a DeLorean?
+          </div>
+        </div>
+        );
+    } else if(!isRestaurantOpenOnSelectedDay()) {
+      setEditBtnStyle(saveBtnDisabled);
+      setErrorMessage(
+        <div className='text-red-400 text-sm text-center'>
+          Restaurant is closed on this day.
+        </div>
+      );
+    } else {
+      timeSelected === null ? setEditBtnStyle(saveBtnDisabled) : setEditBtnStyle(saveBtnEnabled);
+      setErrorMessage(null);
+    };
+  };
+
+  const resetStates = () => {
+    setEditBtnStyle(saveBtnDisabled);
+    setSubmitData({});
+    setTimeslots('');
+    setErrorMessage(false);
+  };
+
+  const handleSubmitSave = () => {
+    return axios
+      .put(`${process.env.REACT_APP_API_URL}/api/user/booking/${input.id}`, submitData)
+      .then(() => getUserBookings());
+  };
+
+  const handleDeleteBooking = () => {
+    return axios
+      .delete(`${process.env.REACT_APP_API_URL}/api/user/booking/${input.id}`)
+      .then(() => getUserBookings());
+  };
+
+  const displayTimeslots = () => {
+    const currentDateInt = parseInt(moment(new Date()).format('Y') + moment(new Date()).format('MM') + moment(new Date()).format('DD'));
+    const userInputDateInt = parseInt(moment(dateValue).format('Y') + moment(dateValue).format('MM') + moment(dateValue).format('DD'));
+    const currentTimeInt = parseInt(moment(new Date()).format('HH:mm').split(':').join(''));
+
+    const verifyCurrentDate = () => {
+      if( currentDateInt === userInputDateInt) {
+        return currentTimeInt;
+      };
+      return 0;
+    };
+
+    if(covers > 0 && covers <= maxCapacity && isRestaurantOpenOnSelectedDay()) {
+      setTimeslots(availableTimeslots.map(element => {
+        const timeToString =  element
+        .toString()
+        .split(' ')
+        .map(string => string.slice(0,2)+':'+string.slice(2, 4))
+        .join('');
+
+        return (
+          verifyCurrentDate() < element && <div
+            key={element}
+            className={timeToString === timeSelected ? badgeInactive : badgeActive}
+            onClick={() => setTimeSelected(timeToString)}
+          >
+            { timeToString }
+          </div>
+          );
+      }));
+    };
+  };
 
   useEffect(() => {
+    parseErrorMessages();
+    displayTimeslots();
 
-    const dateArr = moment(dateValue).format("LLLL").split(' ').map(element => element.split('').filter(letter => letter !== ',' && letter).join(''));
+    const dateArr = moment(dateValue).format("LLLL").split(' ').map(element => element.split('').filter(char => char !== ',' && char).join(''));
 
     setSubmitData({
       day: dateArr[0],
@@ -56,12 +162,13 @@ const UserBookingEditModal = ({ input }) => {
       ...(timeSelected !== '' && { time: timeSelected }),
       ...(covers > 0 && { covers: parseInt(covers) })
     });
-  }, [dateValue, covers, timeSelected]);
+
+    getAvailableTimeslots(input.id, covers, dateArr[2], dateArr[1], dateArr[3]);
+  }, [dateValue, covers, timeSelected, maxCapacity]);
 
   return (
     <>
-      <input className="modal-toggle"  type="checkbox" id="UserBookingEditModal"/>
-      {console.log(submitData)}
+      <input className="modal-toggle h-screen"  type="checkbox" id="UserBookingEditModal"/>
       <div className="modal">
         <div className="modal-box">
           <p className="py-4 text-3xl text-center">Edit Booking</p>
@@ -70,7 +177,7 @@ const UserBookingEditModal = ({ input }) => {
             value={dateValue}
             onChange={value => {
               setDateValue(value);
-
+              setTimeSelected(null);
               const dateArr = moment(value).format("LLLL").split(' ').splice(0, 4).map(element => element.split('').filter(letter => letter !== ',' && letter).join(''));
 
               setSubmitData({
@@ -83,6 +190,7 @@ const UserBookingEditModal = ({ input }) => {
               });
 
               getAvailableTimeslots(input.restaurantId, covers, dateArr[2], dateArr[1], dateArr[3]);
+              displayTimeslots();
             }
           }
           />
@@ -99,15 +207,8 @@ const UserBookingEditModal = ({ input }) => {
               type="number"
               className="input input-bordered w-24 focus:outline-none"
               onChange={e => {
-                setTimeSelected('');
+                setTimeSelected(null);
                 parseCover(e.target.value);
-                // If covers are bigger than max capacity, covers are smaller than 1 or no covers are entered, disable the Edit button.
-                (parseInt(e.target.value) > maxCapacity ||
-                parseInt(e.target.value) < 1 ||
-                e.target.value === '' ) ?
-                setEditBtnStyle(editBtnDisabled) :
-                setEditBtnStyle(editBtnEnabled);
-
                 // If covers are smaller than 1 or no covers are entered, don't send the request.
                 (parseInt(e.target.value) > 0 && e.target.value !== '') &&
                 getAvailableTimeslots(input.restaurantId, e.target.value, submitData.dayDate, submitData.month, submitData.year);
@@ -115,29 +216,40 @@ const UserBookingEditModal = ({ input }) => {
           </label>
 
           <div className='my-3 flex justify-center flex-wrap'>
-            { covers > maxCapacity && <div> No tables available that can seat {covers} covers.</div> }
-            { (covers > 0 && covers <= maxCapacity) && availableTimeslots.map(element => {
-              const timeToString = element.toString().split(' ').map(string => string.slice(0,2)+':'+string.slice(2, 4)).join('')
-              return <div className={timeToString === timeSelected ? badgeInactive : badgeActive} key={element} onClick={() => setTimeSelected(timeToString)}> { timeToString } </div>
-            }) }
+            { errorMessage ? errorMessage : timeslots }
+          </div>
+
+          <div>
+            <div className='flex justify-center'>
+              <label
+                className="btn btn-outline btn-error w-40 my-2"
+                htmlFor="UserBookingEditModal"
+                onClick={() => handleDeleteBooking()}
+              >
+                Cancel Booking
+              </label>
             </div>
 
-          <div className="modal-action flex justify-center">
-            <label className="btn btn-outline btn-accent" htmlFor="UserBookingEditModal">Cancel</label>
-            <label
-              className="btn btn-outline btn-error"
-              htmlFor="UserBookingEditModal"
-              onClick={() => axios.delete(`${process.env.REACT_APP_API_URL}/api/user/booking/${input.id}`).then(() => getUserBookings())}
-            >
-              Delete Table
-            </label>
-            <label
-              className={editBtnStyle}
-              htmlFor="UserBookingEditModal"
-              onClick={() => axios.put(`${process.env.REACT_APP_API_URL}/api/user/booking/${input.id}`, submitData).then(() => getUserBookings())}
-            >
-              Edit
-            </label>
+
+            <div className='flex justify-center'>
+              <label
+                className={editBtnStyle}
+                htmlFor="UserBookingEditModal"
+                onClick={() => handleSubmitSave()}
+              >
+                Save Changes
+              </label>
+            </div>
+
+            <div  className='flex justify-center'>
+              <label
+                className="btn btn-outline btn-accent  w-40 my-2"
+                htmlFor="UserBookingEditModal"
+                onClick={() => resetStates()}
+              >
+                Exit
+              </label>
+            </div>
           </div>
         </div>
       </div>
