@@ -5,11 +5,12 @@ import TableContext from '../../../context/TableContext';
 import TableSettings from '../../../components/TableSettings';
 
 const PagesUserProfileShow = () => {
-  const { getProfile, profileArray, tables } = useContext(TableContext);
+  const { getProfile, profileArray, getTables } = useContext(TableContext);
 
   useEffect(() => {
     getProfile();
-  }, [tables]);
+    getTables()
+  }, []);
 
   return (
     <div className='max-w-screen my-5'>
