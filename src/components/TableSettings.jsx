@@ -35,6 +35,10 @@ const TableSettings = () => {
   useEffect(() => {
     setTablesArr(tables);
 
+    if(isNaN(newTable.minCapacity) || isNaN(newTable.maxCapacity)) {
+      setErrorMessage('Capacity myst be a number.');
+    };
+
     // Verify that minCapacity is not bigger than maxCapacity
     if(parseInt(newTable.minCapacity) > parseInt(newTable.maxCapacity)){
       setErrorMessage('Min capacity can\'t be bigger than max capacity.');
@@ -48,35 +52,35 @@ const TableSettings = () => {
 
     // Change button style if there's no error
     if(!errorMessage && newTable?.tableNr && newTable?.minCapacity && newTable?.maxCapacity) {
-      setAddButtonStyle('btn btn-outline btn-secondary');
+      setAddButtonStyle('btn btn-outline  btn-sm sm:btn-md btn-secondary');
     } else {
-      setAddButtonStyle('btn btn-disabled');
+      setAddButtonStyle('btn  btn-sm sm:btn-md btn-disabled');
     };
 
   }, [tables, errorMessage, newTable, getTables]);
 
   return (
-    <div className='flex justify-center m-5'>
+    <div className='flex justify-center sm:m-5'>
       <div className="overflow-x-auto">
-        <table className="table table-zebra w-full">
+        <table className="table-compact md:table table-zebra w-full">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Min Capacity</th>
-              <th>Max Capacity</th>
-              <th></th>
+              <td className='text-xs md:text-sm font-bold p-2 text-center'>Name</td>
+              <td className='text-xs md:text-sm font-bold p-2 text-center'>Min Capacity</td>
+              <td className='text-xs md:text-sm font-bold p-2 text-center'>Max Capacity</td>
+              <td className='text-xs md:text-sm font-bold p-2 text-center'></td>
             </tr>
           </thead>
           <tbody>
           {tablesArr.sort((a,b) => a.tableNr - b.tableNr).map(element => {
             return(
-              <tr key={element.id}>
-                <td className='text-center'>{element.tableNr}</td>
-                <td className='text-center'>{element.minCapacity}</td>
-                <td className='text-center'>{element.maxCapacity}</td>
-                <td className='text-center'>
+              <tr className='m-0 p-0' key={element.id}>
+                <td className='text-center py-1 p-0'>{element.tableNr}</td>
+                <td className='text-center py-1 p-0'>{element.minCapacity}</td>
+                <td className='text-center py-1 p-0'>{element.maxCapacity}</td>
+                <td className='text-center py-1 p-0'>
                   <label
-                    className='btn btn-outline btn-error'
+                    className='btn btn-outline btn-error btn-sm sm:btn-md'
                     htmlFor='TableEditModal'
                     onClick={() => setEditState({
                       id: element.id,
@@ -98,7 +102,7 @@ const TableSettings = () => {
                 <input
                 type="text"
                 value={inputValues.tableNr}
-                className="input input-bordered w-14"
+                className="input input-bordered input-sm md:input-md w-14"
                 onChange={e => {
                   setErrorMessage(null);
                   setNewTable({...newTable, tableNr: e.target.value});
@@ -110,7 +114,7 @@ const TableSettings = () => {
                 <input
                 type="text"
                 value={inputValues.minCapacity}
-                className="input input-bordered w-14"
+                className="input input-bordered input-sm md:input-md w-14"
                 onChange={e => {
                   setErrorMessage(null);
                   setNewTable({...newTable, minCapacity: e.target.value});
@@ -123,7 +127,7 @@ const TableSettings = () => {
                 <input
                 type="text"
                 value={inputValues.maxCapacity}
-                className="input input-bordered w-14"
+                className="input input-bordered input-sm md:input-md w-14"
                 onChange={e => {
                   setErrorMessage(null);
                   setNewTable({...newTable, maxCapacity: e.target.value});
