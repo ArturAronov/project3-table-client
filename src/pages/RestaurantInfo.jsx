@@ -28,12 +28,12 @@ const RestaurantInfo = () => {
     <div className='w-screen my-5'>
       <div className='flex justify-center my-5'>
         {Object.keys(restaurantInfo).length && (
-          <div className="stats stats-vertical shadow sm:max-w-sm">
+          <div className="stats stats-vertical shadow sm:max-w-sm overflow-hidden">
 
             <div className='stat'>
               <div className="stat-value text-center mb-5">{ name }</div>
-              <div className='flex justify-center flex-col'>
-                <img src={logo} alt={name} className='rounded-lg'/>
+              <div className='flex justify-center w-100'>
+                <img src={logo} alt={name} className='rounded-lg '/>
               </div>
             </div>
             <div className="stat">
