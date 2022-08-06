@@ -42,7 +42,13 @@ const UserBookingEditModal = ({ input }) => {
   const [ errorMessage, setErrorMessage ] = useState(false);
 
   const parseCover = input => {
-    return input === '' ? setCovers(0) : setCovers(parseInt(input));
+    if(parseInt(input) < 0) {
+      setCovers(0);
+    } else if(input === ''){
+      setCovers(0);
+    } else {
+      setCovers(parseInt(input));
+    };
   };
 
   const isRestaurantOpenOnSelectedDay = () => {

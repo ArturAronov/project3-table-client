@@ -30,7 +30,13 @@ const {
 } = input;
 
   const parseCover = coversInput => {
-    return coversInput === '' ? setCovers(0) : setCovers(parseInt(coversInput));
+    if(parseInt(coversInput) < 0) {
+      setCovers(0);
+    } else if(input === ''){
+      setCovers(0);
+    } else {
+      setCovers(parseInt(coversInput));
+    };
   };
 
   const isRestaurantOpenOnSelectedDay = () => {
@@ -83,7 +89,6 @@ const {
     setErrorMessage(null);
   };
 
-
   const displayTimeslots = () => {
     const currentDateInt = parseInt(moment(new Date()).format('Y') + moment(new Date()).format('MM') + moment(new Date()).format('DD'));
     const userInputDateInt = parseInt(moment(dateValue).format('Y') + moment(dateValue).format('MM') + moment(dateValue).format('DD'));
@@ -117,11 +122,16 @@ const {
     };
   };
 
+  const handleSubmitBooking = restaurantId => {
+    return axios
+      .post(`${process.env.REACT_APP_API_URL}/api/user/booking/${restaurantId}`, submitData)
+      .then(() => getUserBookings())
+      .then(() => navigate('/user/bookings'));
+  };
 
   useEffect(() => {
     parseErrorMessages();
     displayTimeslots();
-
 
     if(covers > maxCapacity) {
       setBookBtnStyle(bookBtnDisabled)
@@ -133,7 +143,12 @@ const {
       setBookBtnStyle(bookBtnEnabled)
     };
 
-    const dateArr = moment(dateValue).format("LLLL").split(' ').map(element => element.split('').filter(char => char !== ',' && char).join(''));
+    const dateArr = moment(dateValue)
+      .format("LLLL")
+      .split(' ')
+      .map(element => element.split('')
+      .filter(char => char !== ',' && char)
+      .join(''));
 
     setSubmitData({
       day: dateArr[0],
@@ -144,10 +159,7 @@ const {
       covers: parseInt(covers)
     });
 
-
     getAvailableTimeslots(id, covers, dateArr[2], dateArr[1], dateArr[3]);
-
-
   }, [dateValue, covers, timeSelected, maxCapacity]);
 
   return (
@@ -206,7 +218,7 @@ const {
             <label
               htmlFor='userBookingModal'
               className={bookBtnStyle}
-              onClick={() => axios.post(`${process.env.REACT_APP_API_URL}/api/user/booking/${id}`, submitData).then(() => getUserBookings()).then(() => navigate('/user/bookings'))}
+              onClick={() => handleSubmitBooking(id)}
             >
               Book
             </label>
