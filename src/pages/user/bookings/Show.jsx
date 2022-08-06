@@ -5,10 +5,37 @@ import TableContext from '../../../context/TableContext';
 import UserBookingEditModal from '../../../components/Modals/UserBookingEditModal';
 
 const PagesUserBookingsShow = () => {
-  const { bookings, getAvailableTimeslots } = useContext(TableContext);
+  const { bookings, getAvailableTimeslots, restaurants } = useContext(TableContext);
   const navigate = useNavigate();
-
   const [ editInputObj, setEditInputObj ] = useState({});
+
+  const handleEditOnClick = element => {
+    const {
+      id,
+      covers,
+      time,
+      dayDate,
+      day,
+      year,
+      month,
+      restaurantId,
+    } = element;
+
+    const daysOperating = restaurants.filter(restaurant => restaurant.id === restaurantId && restaurant)[0].daysOperating
+
+    setEditInputObj({
+      id,
+      covers,
+      time,
+      dayDate: element.dayDate,
+      day,
+      year,
+      month,
+      restaurantId,
+      daysOperating,
+    });
+    getAvailableTimeslots(restaurantId, covers, dayDate, month, year)
+}
   return (
     <div className='w-screen'>
     <div className='text-center text-3xl m-5'>My Bookings</div>
@@ -24,44 +51,42 @@ const PagesUserBookingsShow = () => {
             </tr>
           </thead>
           <tbody>
-              {bookings.map(element => {
-                return (
-                  <tr key={element.id}>
-                    <td className='text-center'>{element.time}</td>
-                    <td className='text-center'>{element.dayDate}/{element.month}/{element.year}</td>
-                    <td className='text-center'>{element.covers}</td>
-                    <td className='text-center'>
-                      <div className='cursor-pointer' onClick={() => navigate(`/restaurant/${element.restaurantId}`)}>
-                        {element.restaurantName}
-                      </div>
-                    </td>
-                    <td className='text-center'>
-                      <label
-                        className='btn btn-outline btn-error'
-                        htmlFor='UserBookingEditModal'
-                        onClick={() => {
-                          setEditInputObj({
-                            id: element.id,
-                            covers: element.covers,
-                            time: element.time,
-                            dayDate: element.dayDate,
-                            day: element.day,
-                            year: element.year,
-                            month: element.month,
-                            restaurantId: element.restaurantId,
-                          });
+            {bookings.map(element => {
+              const {
+                id,
+                time,
+                year,
+                dayDate,
+                month,
+                covers,
+                restaurantId,
+                restaurantName,
+              } = element;
 
-                          getAvailableTimeslots(element.restaurantId, element.covers, element.dayDate, element.month, element.year);
-                          }
-                        }
-                      >
-                          Edit
-                      </label>
-                    </td>
+              return (
+                <tr key={id}>
+                  <td className='text-center'>{ time }</td>
+                  <td className='text-center'>{ dayDate } / { month } / { year }</td>
+                  <td className='text-center'>{ covers }</td>
+                  <td className='text-center'>
+                    <div className='cursor-pointer' onClick={() => navigate(`/restaurant/${ restaurantId }`)}>
+                      { restaurantName }
+                    </div>
+                  </td>
+                  <td className='text-center'>
+                    <label
+                      className='btn btn-outline btn-error'
+                      htmlFor='UserBookingEditModal'
+                      onClick={() => handleEditOnClick(element)
+                      }
+                    >
 
-                  </tr>
-                )
-              })}
+                        Edit
+                    </label>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
         {editInputObj.day && <UserBookingEditModal input={editInputObj}/>}
