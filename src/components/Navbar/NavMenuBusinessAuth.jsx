@@ -24,7 +24,7 @@ const NavMenuBusinessAuth = () => {
         </div>
       </Link>
       <Link to='/'>
-        <div className='btn btn-ghost text-error p-3 rounded-sm text-slate-300 w-max' onClick={authLogout}>
+        <div className='btn btn-ghost text-error p-3 rounded-sm text-primary w-max' onClick={authLogout}>
           Logout
         </div>
       </Link>
