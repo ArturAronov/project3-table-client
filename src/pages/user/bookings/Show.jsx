@@ -1,10 +1,12 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TableContext from '../../../context/TableContext';
 
 import UserBookingEditModal from '../../../components/Modals/UserBookingEditModal';
 
 const PagesUserBookingsShow = () => {
   const { bookings, getAvailableTimeslots } = useContext(TableContext);
+  const navigate = useNavigate();
 
   const [ editInputObj, setEditInputObj ] = useState({});
   return (
@@ -28,7 +30,11 @@ const PagesUserBookingsShow = () => {
                     <td className='text-center'>{element.time}</td>
                     <td className='text-center'>{element.dayDate}/{element.month}/{element.year}</td>
                     <td className='text-center'>{element.covers}</td>
-                    <td className='text-center'>{element.restaurantName}</td>
+                    <td className='text-center'>
+                      <div className='cursor-pointer' onClick={() => navigate(`/restaurant/${element.restaurantId}`)}>
+                        {element.restaurantName}
+                      </div>
+                    </td>
                     <td className='text-center'>
                       <label
                         className='btn btn-outline btn-error'
