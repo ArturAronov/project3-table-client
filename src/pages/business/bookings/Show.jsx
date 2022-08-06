@@ -1,14 +1,13 @@
 import { useContext, useState, useEffect } from 'react';
-import ReactCalendar from 'react-calendar';
+import Calendar from 'react-calendar';
 import TableContext from '../../../context/TableContext';
 import moment from 'moment';
 
 const PagesBusinessBookingsShow = () => {
-  const { restaurantBookings } = useContext(TableContext);
+  const { restaurantBookings, profile } = useContext(TableContext);
   const [ dateValue, setDateValue ] = useState(new Date());
   const [ calendarData, setCalendarData ] = useState({});
-  const [ bookingData, setBookingData ] = useState({});
-  const [ loadData, setLoadData] = useState(false)
+  const [ daysOpen, setDaysOpen ] = useState([]);
 
   const filterData = () => {
     return restaurantBookings.filter(element => {
@@ -18,8 +17,13 @@ const PagesBusinessBookingsShow = () => {
     });
   };
 
+  const bookedDays = restaurantBookings.map(element => {
+    return `${element.month} ${element.dayDate}, ${element.year}`
+  });
 
   useEffect(() => {
+    profile?.daysOperating && setDaysOpen(profile.daysOperating.split(','));
+
     const dateArr = moment(dateValue).format("LLLL").split(' ').map(element => element.split('').filter(letter => letter !== ',' && letter).join(''));
 
     setCalendarData({
@@ -28,18 +32,31 @@ const PagesBusinessBookingsShow = () => {
       month: dateArr[1],
       year: dateArr[3],
     });
-
-
-
-
-  }, [restaurantBookings, dateValue]);
+  }, [restaurantBookings, dateValue, profile]);
 
   return (
     <div className='my-5 w-screen'>
       <div className='flex justify-center'>
         <div className='max-w-lg '>
-          <ReactCalendar value={dateValue} onChange={value => {
-            const dateArr = moment(dateValue).format("LLLL").split(' ').map(element => element.split('').filter(letter => letter !== ',' && letter).join(''));
+          <Calendar
+            value={dateValue}
+            className='text-center'
+            tileClassName={({date, view}) => {
+              if(bookedDays.find(element => element === moment(date).format('LL'))){
+                return 'text-success font-bold bg-base-300 rounded-lg';
+              } else if(!profile?.daysOpen && !daysOpen.includes(moment(date).format('LLLL').split(',')[0])){
+                return 'text-error font-bold';
+              };
+            }}
+            onChange={value => {
+              const dateArr = moment(dateValue)
+                .format("LLLL")
+                .split(' ')
+                .map(element => element
+                  .split('')
+                  .filter(letter => letter !== ',' && letter)
+                  .join('')
+                );
 
             setCalendarData({
               day: dateArr[0],
@@ -49,7 +66,8 @@ const PagesBusinessBookingsShow = () => {
             });
 
             setDateValue(value)
-          }} className='text-center flex-justify-center'/>
+          }} />
+
         </div>
       </div>
 
@@ -57,12 +75,11 @@ const PagesBusinessBookingsShow = () => {
         <table className="table table-zebra">
           <thead>
             <tr className='text-center'>
-              <th>Time</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Covers</th>
-              <th>Name</th>
-              <th></th>
+              <td>Time</td>
+              <td>Date</td>
+              <td>Covers</td>
+              <td>Name</td>
+              <td></td>
             </tr>
           </thead>
           <tbody>
@@ -71,7 +88,6 @@ const PagesBusinessBookingsShow = () => {
                 <tr key={element.id}>
                   <td>{element.time}</td>
                   <td>{element.dayDate}/{element.month}/{element.year}</td>
-                  <td>{element.time}</td>
                   <td>{element.covers}</td>
                   <td>{element.firstName} {element.lastName}</td>
                   <td className='btn'> Info </td>
