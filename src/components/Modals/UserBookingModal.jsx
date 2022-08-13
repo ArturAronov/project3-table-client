@@ -21,8 +21,9 @@ const UserBookingModal = ({ input }) => {
   const [ dateValue, setDateValue ] = useState(new Date());
   const [ submitData, setSubmitData ] = useState({});
   const [ bookBtnStyle, setBookBtnStyle ] = useState(bookBtnDisabled);
-  const [ timeslots, setTimeslots ] = useState('');
-  const [ errorMessage, setErrorMessage ] = useState(null);
+  const [ timeslots, setTimeslots ] = useState([]);
+  const [ errorMessage, setErrorMessage ] = useState(false);
+  const [ daysOpen, setDaysOpen ] = useState([]);
 
 const {
   id,
@@ -53,7 +54,7 @@ const {
         <div className='text-red-400 text-center text-sm'>
           Please enter covers.
         </div>
-      )
+      );
     } else if (maxCapacity && covers > maxCapacity) {
       setErrorMessage(
         <div className='text-red-400 text-center text-sm'>
@@ -77,49 +78,85 @@ const {
     } else if(!isRestaurantOpenOnSelectedDay()) {
       setErrorMessage(<div className='text-red-400 text-sm text-center'>Restaurant is closed on this day.</div>)
     } else {
-      setErrorMessage(null);
+      setErrorMessage(false);
     };
   };
 
   const resetStates = () => {
+    setBookBtnStyle(bookBtnDisabled);
+
+    setTimeslots([]);
+    setErrorMessage(false);
     setCovers(0);
     setTimeSelected(null);
-    setSubmitData({});
-    setBookBtnStyle(bookBtnDisabled);
-    setErrorMessage(null);
   };
 
-  const displayTimeslots = () => {
-    const currentDateInt = parseInt(moment(new Date()).format('Y') + moment(new Date()).format('MM') + moment(new Date()).format('DD'));
-    const userInputDateInt = parseInt(moment(dateValue).format('Y') + moment(dateValue).format('MM') + moment(dateValue).format('DD'));
-    const currentTimeInt = parseInt(moment(new Date()).format('HH:mm').split(':').join(''));
+  const displayTimeslots = async (dateInput) => {
+    const dateArr = moment(dateInput)
+      .format("LLLL")
+      .split(' ')
+      .map(element => element.split('')
+      .filter(char => char !== ',' && char)
+      .join(''));
 
-    const verifyCurrentDate = () => {
-      if( currentDateInt === userInputDateInt) {
-        return currentTimeInt;
-      };
-      return 0;
-    };
+    setSubmitData({
+      day: dateArr[0],
+      dayDate: dateArr[2],
+      month: dateArr[1],
+      year: dateArr[3],
+      time: timeSelected,
+      covers: parseInt(covers)
+    });
 
-    if(covers > 0 && covers <= maxCapacity && isRestaurantOpenOnSelectedDay()) {
-      setTimeslots(availableTimeslots.map(element => {
-        const timeToString =  element
-        .toString()
-        .split(' ')
-        .map(string => string.slice(0,2)+':'+string.slice(2, 4))
-        .join('');
+    const currentDateInt = parseInt(moment(new Date())
+      .format('Y') + moment(new Date())
+      .format('MM') + moment(new Date())
+      .format('DD'));
+    const userInputDateInt = parseInt(moment(dateInput)
+      .format('Y') + moment(dateInput)
+      .format('MM') + moment(dateInput)
+      .format('DD'));
+    const currentTimeInt = parseInt(moment(new Date())
+      .format('kk:mm')
+      .split(':')
+      .join(''));
 
-        return (
-          verifyCurrentDate() < element && <div
-            key={element}
-            className={timeToString === timeSelected ? badgeInactive : badgeActive}
-            onClick={() => setTimeSelected(timeToString)}
-          >
-            { timeToString }
-          </div>
-          );
+    const timeSlotsArr = await axios.get(`${process.env.REACT_APP_API_URL}/api/timeslots/${id}/${covers}/${dateArr[2]}/${dateArr[1]}/${dateArr[3]}`).then(res => res.data.tablesAvailable);
+
+
+    // Return boolean if date selected is same as today's date
+    const selectedToday = currentDateInt === userInputDateInt;
+
+    // If date selected is today, return current time integer
+    const currentTime = selectedToday ? currentTimeInt : 0;
+
+    if(!selectedToday && covers > 0 && covers <= maxCapacity) {
+      // Converts time integers into string ie 1200 -> 12:00
+      setTimeslots(timeSlotsArr.map(element => {
+          return element
+            .toString()
+            .split(' ')
+            .map(string =>  {
+              string.length === 3 && (string = 0 + string)
+              return string.slice(0,2)+':'+string.slice(2, 4)
+            })
+            .join('')
+            }
+      ));
+    } else if(selectedToday && covers > 0 && covers <= maxCapacity) {
+      console.log('here')
+      setTimeslots(timeSlotsArr.filter(element => currentTime < element && element).map(element => {
+        return element
+            .toString()
+            .split(' ')
+            .map(string => {
+              string.length === 3 && (string = 0 + string)
+              return string.slice(0,2)+':'+string.slice(2, 4)
+            })
+            .join('')
+
       }));
-    };
+    }
   };
 
   const handleSubmitBooking = restaurantId => {
@@ -131,16 +168,19 @@ const {
 
   useEffect(() => {
     parseErrorMessages();
-    displayTimeslots();
+
+    daysOperating && setDaysOpen(daysOperating.split(','));
 
     if(covers > maxCapacity) {
-      setBookBtnStyle(bookBtnDisabled)
+      setBookBtnStyle(bookBtnDisabled);
     } else if(covers < 1) {
-      setBookBtnStyle(bookBtnDisabled)
+      setBookBtnStyle(bookBtnDisabled);
     } else if (!timeSelected){
-      setBookBtnStyle(bookBtnDisabled)
+      setBookBtnStyle(bookBtnDisabled);
+    } else if(!errorMessage) {
+      setBookBtnStyle(bookBtnDisabled);
     } else {
-      setBookBtnStyle(bookBtnEnabled)
+      setBookBtnStyle(bookBtnEnabled);
     };
 
     const dateArr = moment(dateValue)
@@ -159,20 +199,52 @@ const {
       covers: parseInt(covers)
     });
 
-    getAvailableTimeslots(id, covers, dateArr[2], dateArr[1], dateArr[3]);
-  }, [dateValue, covers, timeSelected, maxCapacity]);
+  }, [dateValue, covers, timeSelected, maxCapacity, availableTimeslots, daysOperating]);
 
   return (
     <>
     <input className="modal-toggle" type="checkbox" id="userBookingModal" />
     <div className="modal">
       <div className="modal-box">
+        <div className='text-center'>
+          <span className="py-4 text-3xl text-center">
+            Book Table
+          </span>
+          <label
+            onClick={() => resetStates()}
+            htmlFor="userBookingModal"
+            className="btn btn-md btn-circle absolute right-4 top-4">
+            ✕
+          </label>
+        </div>
         <Calendar
           className='text-center'
           value={dateValue}
           onChange={value => {
-            displayTimeslots();
             setDateValue(value);
+            displayTimeslots(value);
+          }}
+
+          tileClassName={({ date }) => {
+            const dateSelected = moment(date)
+              .format('LL')
+              .split(',  ')[0];
+            const currentDate = moment(dateValue)
+              .format('LL')
+              .split(',  ')[0];
+            const isRestaurantOpenOnTheDay = !daysOpen
+              .includes(moment(date)
+                .format('LLLL')
+                .split(',')[0]
+              );
+
+            if(dateSelected === currentDate) {
+              return 'bg-info text-base-100 rounded-md'
+            } else if(!input?.daysOpen && isRestaurantOpenOnTheDay){
+              return 'text-error font-bold w-10 h-10';
+            } else {
+              return 'w-10 h-10'
+            }
           }}
         />
         <div className='flex justify-center m-5'>
@@ -186,9 +258,9 @@ const {
           <input
             value={covers}
             type="number"
-            className="input input-bordered w-24 focus:outline-none"
+            className="input input-bordered w-24 focus:outline-none text-center"
             onChange={e => {
-              setTimeSelected('');
+              setTimeSelected(null);
               parseCover(e.target.value);
               // If covers are bigger than max capacity, covers are smaller than 1 or no covers are entered, disable the Edit button.
               (parseInt(e.target.value) > maxCapacity ||
@@ -200,11 +272,26 @@ const {
               // If covers are smaller than 1 or no covers are entered, don't send the request.
               (parseInt(e.target.value) > 0 && e.target.value !== '') &&
               getAvailableTimeslots(id, e.target.value, submitData.dayDate, submitData.month, submitData.year);
+              displayTimeslots(dateValue);
             }}/>
           </label>
 
           <div className='my-3 flex justify-center flex-wrap'>
-          { errorMessage ? errorMessage : timeslots }
+          {
+            errorMessage ?
+            errorMessage :
+            timeslots.map(element => {
+              return (
+                <div
+                key={element}
+                className={element === timeSelected ? badgeInactive : badgeActive}
+                onClick={() => setTimeSelected(element)}
+              >
+                { element }
+              </div>
+              )
+            })
+          }
           </div>
           <div className="modal-action flex justify-center">
             <label
