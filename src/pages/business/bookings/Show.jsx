@@ -3,12 +3,15 @@ import Calendar from 'react-calendar';
 import TableContext from '../../../context/TableContext';
 import moment from 'moment';
 
+import UserInfoModal from '../../../components/Modals/UserInfoModal';
+
 const PagesBusinessBookingsShow = () => {
   const { restaurantBookings, profile } = useContext(TableContext);
   const [ dateValue, setDateValue ] = useState(new Date());
   const [ calendarData, setCalendarData ] = useState({});
   const [ daysOpen, setDaysOpen ] = useState([]);
   const [ dailyBookings, setDailyBookings ] = useState([]);
+  const [ bookingInfo, setBookingInfo ] = useState([]);
 
   const filterData = (day, month, year) => {
     const bookings = restaurantBookings.filter(element => {
@@ -23,6 +26,14 @@ const PagesBusinessBookingsShow = () => {
   const bookedDays = restaurantBookings.map(element => {
     return `${element.month} ${element.dayDate}, ${element.year}`
   });
+
+  const handleNameOnClick = nameInput => {
+    return setBookingInfo(nameInput)
+  };
+
+  const handleInfoBtnOnClick = bookingInput => {
+
+  };
 
   useEffect(() => {
     profile?.daysOperating && setDaysOpen(profile.daysOperating.split(','));
@@ -121,13 +132,32 @@ const PagesBusinessBookingsShow = () => {
                   <td className='p-1 sm:p-3'>{element.time}</td>
                   <td className='p-1 sm:p-3'>{element.tableNr}</td>
                   <td className='p-1 sm:p-3'>{element.covers}</td>
-                  <td className='p-1 sm:p-3'>{element.firstName} {element.lastName}</td>
+                  <td className='p-1 sm:p-3'>
+                    {
+                      element?.userId ?
+                      <label
+                        className='text-primary cursor-pointer '
+                        onClick={() => setBookingInfo(element)}
+                        htmlFor="UserInfoModal"
+                      >
+                        {element.firstName} {element.lastName}
+                      </label> :
+                      <label
+                        className='cursor-pointer'
+                        onClick={() => setBookingInfo(element)}
+                        htmlFor="UserInfoModal"
+                      >
+                        {element.firstName} {element.lastName}
+                      </label>
+                    }
+                  </td>
                   <td className='btn mx-2'> Info </td>
                 </tr>
               )
             }) }
           </tbody>
         </table>
+        <UserInfoModal input={bookingInfo}/>
       </div>
       :
       <div className='text-center m-5 p-5'>
