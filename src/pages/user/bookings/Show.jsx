@@ -40,7 +40,7 @@ const PagesUserBookingsShow = () => {
     <div className='w-screen'>
     <div className='text-center text-3xl m-5'>My Bookings</div>
       <div className="overflow-x-auto flex justify-center my-5">
-        <table className="table table-zebra my-5">
+        <table className="table-compact sm:table table-zebra my-5">
           <thead>
             <tr>
               <th className='text-center'>Time</th>
@@ -66,7 +66,7 @@ const PagesUserBookingsShow = () => {
               return (
                 <tr key={id}>
                   <td className='text-center'>{ time }</td>
-                  <td className='text-center'>{ dayDate } / { month } / { year }</td>
+                  <td className='text-center'>{ dayDate } / { month.substring(0,3) } / { year }</td>
                   <td className='text-center'>{ covers }</td>
                   <td className='text-center'>
                     <div className='cursor-pointer' onClick={() => navigate(`/restaurant/${ restaurantId }`)}>
@@ -75,7 +75,7 @@ const PagesUserBookingsShow = () => {
                   </td>
                   <td className='text-center'>
                     <label
-                      className='btn btn-outline btn-error'
+                      className='btn btn-outline btn-error btn-sm sm:btn-md'
                       htmlFor='UserBookingEditModal'
                       onClick={() => handleEditOnClick(element)
                       }
