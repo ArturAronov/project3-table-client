@@ -2,11 +2,12 @@ import { useContext, useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import TableContext from '../../../context/TableContext';
 import moment from 'moment';
+import axios from 'axios';
 
 import UserInfoModal from '../../../components/Modals/UserInfoModal';
 
 const PagesBusinessBookingsShow = () => {
-  const { restaurantBookings, profile } = useContext(TableContext);
+  const { restaurantBookings, getRestaurantBookings } = useContext(TableContext);
   const [ dateValue, setDateValue ] = useState(new Date());
   const [ calendarData, setCalendarData ] = useState({});
   const [ daysOpen, setDaysOpen ] = useState([]);
@@ -27,16 +28,14 @@ const PagesBusinessBookingsShow = () => {
     return `${element.month} ${element.dayDate}, ${element.year}`
   });
 
-  const handleNameOnClick = nameInput => {
-    return setBookingInfo(nameInput)
-  };
 
-  const handleInfoBtnOnClick = bookingInput => {
-
-  };
 
   useEffect(() => {
-    profile?.daysOperating && setDaysOpen(profile.daysOperating.split(','));
+    getRestaurantBookings();
+    axios.get(process.env.REACT_APP_API_URL + '/api/profile', {withCredentials: true})
+      .then(res => {
+        setDaysOpen(res.data.daysOperating.split(','));
+      })
 
     const dateArr = moment(dateValue)
       .format("LLLL")
@@ -51,10 +50,9 @@ const PagesBusinessBookingsShow = () => {
       year: dateArr[3],
     });
 
-
     filterData(dateArr[2], dateArr[1], dateArr[3]);
 
-  }, [restaurantBookings, dateValue, profile]);
+  }, [dateValue]);
 
   return (
     <div className='my-5 w-screen'>
@@ -78,17 +76,22 @@ const PagesBusinessBookingsShow = () => {
 
               if(dateSelected === currentDate) {
                 return 'bg-info text-base-100 rounded-md'
-              } else if(bookedDays.find(element => element === moment(date).format('LL'))){
-                return 'text-success font-bold bg-base-300 rounded-md w-10 h-10';
-              } else if(!profile?.daysOpen && isRestaurantOpenOnTheDay){
-                return 'text-error font-bold w-10 h-10';
-              } else {
-                return 'w-10 h-10'
               }
+
+              if(bookedDays.find(element => element === moment(date).format('LL'))){
+                return 'text-success font-bold bg-base-300 rounded-md w-10 h-10';
+              }
+
+              if(restaurantBookings.length && isRestaurantOpenOnTheDay){
+                return 'text-error font-bold w-10 h-10';
+              }
+
+              return 'w-10 h-10'
             }}
 
 
             onChange={value => {
+              getRestaurantBookings();
               const dateArr = moment(dateValue)
                 .format("LLLL")
                 .split(' ')
