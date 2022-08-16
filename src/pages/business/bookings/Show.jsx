@@ -9,12 +9,32 @@ import UserBookingEditModal from '../../../components/Modals/UserBookingEditModa
 
 const PagesBusinessBookingsShow = () => {
   const { restaurantBookings, getRestaurantBookings, getAvailableTimeslots, profile } = useContext(TableContext);
+
+   const months = {
+    January: 0,
+    February: 1,
+    March: 2,
+    April: 3,
+    May: 4,
+    June: 5,
+    July: 6,
+    August: 7,
+    September: 8,
+    October: 9,
+    November: 10,
+    December: 11
+  };
+
+  const editBtnEnabled = 'btn btn-outline btn-error btn-sm sm:btn-md'
+  const editBtnDisabled = 'btn btn-disabled btn-sm sm:btn-md'
+
   const [ dateValue, setDateValue ] = useState(new Date());
   const [ calendarData, setCalendarData ] = useState({});
   const [ daysOpen, setDaysOpen ] = useState([]);
   const [ dailyBookings, setDailyBookings ] = useState([]);
   const [ bookingInfo, setBookingInfo ] = useState([]);
-  const [ editInputObj, setEditInputObj ] = useState({})
+  const [ editInputObj, setEditInputObj ] = useState({});
+  const [ editBtnStyle, setEditBtnStyle ] = useState(editBtnEnabled);
 
   const filterData = (day, month, year) => {
     const bookings = restaurantBookings.filter(element => {
@@ -25,6 +45,10 @@ const PagesBusinessBookingsShow = () => {
 
     setDailyBookings(bookings);
   };
+
+  const monthToNum = (obj, month) => {
+    return obj[month] < 10 ? '0' + obj[month].toString() : obj[month].toString();
+  }
 
   const handleEditOnClick = element => {
     const {
@@ -81,6 +105,22 @@ const PagesBusinessBookingsShow = () => {
 
     filterData(dateArr[2], dateArr[1], dateArr[3]);
 
+    // Converts a month to number, and adds leading 0 if number is smaller than 10. ie August => 07
+    // const monthToNum = months[dateArr[1]] < 10 ? '0'+months[dateArr[1]].toString() : months[dateArr[1]].toString()
+    const currentDate = moment(new Date())
+      .format("LLLL")
+      .split(' ')
+      .map(element => element.split('').filter(letter => letter !== ',' && letter)
+      .join(''));
+
+    const selectedMonthToNum = monthToNum(months, dateArr[1]);
+    const currentMonthToNum = monthToNum(months, currentDate[1]);
+
+    const selectedDateInt = parseInt(dateArr[3] + selectedMonthToNum + dateArr[2]);
+    const currentDateInt = parseInt(currentDate[3] + currentMonthToNum + currentDate[2]);
+
+    // Change edit button style is user selected the past date
+    selectedDateInt < currentDateInt ? setEditBtnStyle(editBtnDisabled) : setEditBtnStyle(editBtnEnabled);
   }, [dateValue, restaurantBookings]);
 
   return (
@@ -185,12 +225,11 @@ const PagesBusinessBookingsShow = () => {
                   </td>
                   <td>
                     <label
-                      className='btn btn-outline btn-error btn-sm sm:btn-md'
+                      className={editBtnStyle}
                       htmlFor='UserBookingEditModal'
                       onClick={() => handleEditOnClick(element)
                       }
                     >
-            {console.log(element)}
                         Edit
                     </label>
                   </td>
