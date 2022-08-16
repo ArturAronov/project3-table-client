@@ -5,14 +5,16 @@ import moment from 'moment';
 import axios from 'axios';
 
 import UserInfoModal from '../../../components/Modals/UserInfoModal';
+import UserBookingEditModal from '../../../components/Modals/UserBookingEditModal';
 
 const PagesBusinessBookingsShow = () => {
-  const { restaurantBookings, getRestaurantBookings } = useContext(TableContext);
+  const { restaurantBookings, getRestaurantBookings, getAvailableTimeslots, profile } = useContext(TableContext);
   const [ dateValue, setDateValue ] = useState(new Date());
   const [ calendarData, setCalendarData ] = useState({});
   const [ daysOpen, setDaysOpen ] = useState([]);
   const [ dailyBookings, setDailyBookings ] = useState([]);
   const [ bookingInfo, setBookingInfo ] = useState([]);
+  const [ editInputObj, setEditInputObj ] = useState({})
 
   const filterData = (day, month, year) => {
     const bookings = restaurantBookings.filter(element => {
@@ -24,6 +26,34 @@ const PagesBusinessBookingsShow = () => {
     setDailyBookings(bookings);
   };
 
+  const handleEditOnClick = element => {
+    const {
+      id,
+      covers,
+      time,
+      dayDate,
+      day,
+      year,
+      month,
+      restaurantId,
+    } = element;
+
+    const daysOperating = profile.daysOperating
+
+    setEditInputObj({
+      id,
+      covers,
+      time,
+      dayDate: element.dayDate,
+      day,
+      year,
+      month,
+      restaurantId,
+      daysOperating,
+    });
+    getAvailableTimeslots(restaurantId, covers, dayDate, month, year)
+}
+
   const bookedDays = restaurantBookings.map(element => {
     return `${element.month} ${element.dayDate}, ${element.year}`
   });
@@ -31,7 +61,6 @@ const PagesBusinessBookingsShow = () => {
 
 
   useEffect(() => {
-    getRestaurantBookings();
     axios.get(process.env.REACT_APP_API_URL + '/api/profile', {withCredentials: true})
       .then(res => {
         setDaysOpen(res.data.daysOperating.split(','));
@@ -52,7 +81,7 @@ const PagesBusinessBookingsShow = () => {
 
     filterData(dateArr[2], dateArr[1], dateArr[3]);
 
-  }, [dateValue]);
+  }, [dateValue, restaurantBookings]);
 
   return (
     <div className='my-5 w-screen'>
@@ -154,12 +183,23 @@ const PagesBusinessBookingsShow = () => {
                       </label>
                     }
                   </td>
-                  <td className='btn mx-2'> Info </td>
+                  <td>
+                    <label
+                      className='btn btn-outline btn-error btn-sm sm:btn-md'
+                      htmlFor='UserBookingEditModal'
+                      onClick={() => handleEditOnClick(element)
+                      }
+                    >
+            {console.log(element)}
+                        Edit
+                    </label>
+                  </td>
                 </tr>
               )
             }) }
           </tbody>
         </table>
+        {editInputObj.day && <UserBookingEditModal input={editInputObj}/>}
         <UserInfoModal input={bookingInfo}/>
       </div>
       :
