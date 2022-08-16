@@ -6,7 +6,7 @@ import moment from 'moment';
 import TableContext from '../../context/TableContext';
 
 const UserBookingEditModal = ({ input }) => {
-  const { getAvailableTimeslots, maxCapacity, availableTimeslots, getUserBookings } = useContext(TableContext);
+  const { getAvailableTimeslots, maxCapacity, availableTimeslots, getUserBookings, getRestaurantBookings, profile } = useContext(TableContext);
 
  const months = {
     January: 0,
@@ -117,13 +117,13 @@ const UserBookingEditModal = ({ input }) => {
   const handleSubmitSave = () => {
     return axios
       .put(`${process.env.REACT_APP_API_URL}/api/user/booking/${id}`, submitData)
-      .then(() => getUserBookings());
+      .then(() => profile?.name ? getRestaurantBookings() : getUserBookings());
   };
 
   const handleDeleteBooking = () => {
     return axios
       .delete(`${process.env.REACT_APP_API_URL}/api/user/booking/${id}`)
-      .then(() => getUserBookings());
+      .then(() => profile?.name ? getRestaurantBookings() : getUserBookings());
   };
 
   const displayTimeslots = async (dateInput) => {
@@ -196,7 +196,7 @@ const UserBookingEditModal = ({ input }) => {
 
   useEffect(() => {
     parseErrorMessages();
-
+    displayTimeslots(dateValue);
     input?.daysOperating && setDaysOpen(input.daysOperating.split(','));
 
     // setBookBtnStyle
