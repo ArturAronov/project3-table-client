@@ -69,7 +69,7 @@ export const TableProvider = ({ children }) => {
       .then(res => {
         dispatch({
           type: 'AUTH',
-          profile: _.omit(res.data, ['authType']),
+          profile: res.data,
           authType: res.data.authType,
           login: true,
         })
