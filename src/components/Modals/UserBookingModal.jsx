@@ -78,7 +78,11 @@ const {
     } else if(!isRestaurantOpenOnSelectedDay()) {
       setErrorMessage(<div className='text-red-400 text-sm text-center'>Restaurant is closed on this day.</div>)
     } else {
+      timeSelected === null ? setErrorMessage(bookBtnDisabled) : setErrorMessage(bookBtnEnabled);
       setErrorMessage(false);
+
+
+
     };
   };
 
@@ -169,7 +173,7 @@ const {
     parseErrorMessages();
 
     daysOperating && setDaysOpen(daysOperating.split(','));
-
+//
     if(covers > maxCapacity) {
       setBookBtnStyle(bookBtnDisabled);
     } else if(covers < 1) {
@@ -177,7 +181,7 @@ const {
     } else if (!timeSelected){
       setBookBtnStyle(bookBtnDisabled);
     } else if(!errorMessage) {
-      setBookBtnStyle(bookBtnDisabled);
+      setBookBtnStyle(bookBtnEnabled);
     } else {
       setBookBtnStyle(bookBtnEnabled);
     };
