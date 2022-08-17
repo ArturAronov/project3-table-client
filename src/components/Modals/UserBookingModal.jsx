@@ -144,7 +144,6 @@ const {
             }
       ));
     } else if(selectedToday && covers > 0 && covers <= maxCapacity) {
-      console.log('here')
       setTimeslots(timeSlotsArr.filter(element => currentTime < element && element).map(element => {
         return element
             .toString()
